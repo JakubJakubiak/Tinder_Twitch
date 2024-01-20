@@ -69,8 +69,8 @@ function App(): JSX.Element {
   return (
     <View >
     <View style={styles.container}></View >
-       {/* <Screen1/> */}
-       <TwitchAuthLogin/>
+       <Screen1/>
+       {/* <TwitchAuthLogin/> */}
      </View>
   );
 }

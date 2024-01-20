@@ -4,6 +4,10 @@ import { StyleSheet, Text, View, Dimensions, Image, Animated, PanResponder, Scro
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
+interface DogImagesState {
+  dogImages: string[];
+}
+
 export default class Screen1 extends Component {
   position: Animated.ValueXY;
   rotate: any;
@@ -23,6 +27,7 @@ export default class Screen1 extends Component {
       url: [],
       extract: [],
       like: [],
+      dogImages: [],
     };
 
     this.rotate = this.position.x.interpolate({
@@ -65,18 +70,65 @@ export default class Screen1 extends Component {
     });
   }
 
-  componentDidMount = () => {
-    fetch(`https://pl.wikipedia.org/api/rest_v1/page/random/summary`)
+  // componentDidMount = () => {
+  //   fetch(`https://pl.wikipedia.org/api/rest_v1/page/random/summary`)
+  //     .then((res) => res.json())
+  //     .then((wiki) =>
+  //       this.setState({
+  //         url: wiki.thumbnail.source,
+  //         extract: wiki.extract,
+  //         id: wiki.pageid,
+  //       })
+  //     )
+  //     .catch((err) => console.log(err));
+  // };
+
+
+
+
+  // componentDidMount() {
+  //   this.fetchDogImages();
+  // }
+
+
+  componentDidMount() {
+    console.log(this.state.dogImages.length);
+    if (this.state.dogImages.length === 0) {
+      this.fetchDogImages();
+    }
+  }
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   // Check if dogImages array has been updated
+  //   if (this.state.dogImages !== prevState.dogImages) {
+  //     // Perform any additional actions here after dogImages is updated
+  //     console.log('Dog images updated:', this.state.dogImages);
+  //     // You can call fetchDogImages again if needed
+  //     // this.fetchDogImages();
+  //   }
+  // }
+
+  
+
+
+  fetchDogImages = () => {
+    fetch('https://dog.ceo/api/breeds/image/random/10')
       .then((res) => res.json())
-      .then((wiki) =>
-        this.setState({
-          url: wiki.thumbnail.source,
-          extract: wiki.extract,
-          id: wiki.pageid,
-        })
-      )
-      .catch((err) => console.log(err));
+      .then((data) => {
+        if (data.status === 'success') {
+          this.setState((prevState) => ({
+            dogImages: [...prevState.dogImages, ...data.message],
+          }));
+        } else {
+          console.error('Failed to fetch dog images:', data.message);
+        }
+      })
+      .catch((error) => console.error('Error fetching dog images:', error));
   };
+
+
+
+
 
   mount() {
     this.PanResponder = PanResponder.create({
@@ -89,7 +141,7 @@ export default class Screen1 extends Component {
           this.setState({
             currentIndex: 0,
           });
-          this.componentDidMount();
+          // this.componentDidMount();
           console.log(this.state.currentIndex);
         }
 
@@ -119,17 +171,25 @@ export default class Screen1 extends Component {
           });
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
-              toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
-              useNativeDriver: false
+            toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
+            useNativeDriver: false,
           }).start(() => {
             this.setState(
-              { currentIndex: this.state.currentIndex + 1 },
+              (prevState) => ({
+                currentIndex: prevState.currentIndex + 1,
+              }),
               () => {
+                if (this.state.currentIndex >= this.state.dogImages.length - 1) {
+                  // Fetch new dog images when reaching the end of the array
+                  // this.fetchDogImages();
+                }
                 this.position.setValue({ x: 0, y: 0 });
                 console.log(this.state.currentIndex);
               }
             );
           });
+        
+    
         }
 
         if (this.state.currentIndex >= 0) {
@@ -137,7 +197,7 @@ export default class Screen1 extends Component {
             currentIndex: this.state.currentIndex - (this.state.currentIndex + 1),
             url: [],
           });
-          this.componentDidMount();
+          // this.componentDidMount();
         } else {
           Animated.spring(this.position, {
               toValue: { x: 0, y: 0 },
@@ -149,14 +209,22 @@ export default class Screen1 extends Component {
     });
   }
 
+  // renderUsers = () => {
+  //   let Users = [
+  //     {
+  //       id: `${this.state.id}`,
+  //       uri: { uri: `${this.state.url}` },
+  //       Text: `${this.state.extract}`,
+  //     },
+  //   ];
+
+
   renderUsers = () => {
-    let Users = [
-      {
-        id: `${this.state.id}`,
-        uri: { uri: `${this.state.url}` },
-        Text: `${this.state.extract}`,
-      },
-    ];
+    let Users = this.state.dogImages.map((imageUrl, index) => ({
+      id: `${index}`,  // Using index as id for simplicity
+      uri: { uri: imageUrl },
+    }));
+
     console.log(Users, this.state.like, this.state.currentIndex);
     return Users.map((item, i) => {
       if (i < this.state.currentIndex) {
