@@ -1,32 +1,33 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Dimensions, Image, Animated, PanResponder, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  Image,
+  Animated,
+  PanResponder,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-interface DogImagesState {
-  dogImages: string[];
-}
-
 export default class Screen1 extends Component {
-  position: Animated.ValueXY;
-  rotate: any;
-  rotateAndTranslate: { transform: any[]; };
-  likeOpacity: any;
-  dislikeOpacity: any;
-  nextCardOpacity: any;
-  nextCardScale: any;
-  PanResponder: any;
-  constructor(props: {} | Readonly<{}>) {
+  position = new Animated.ValueXY();
+  rotate;
+  rotateAndTranslate;
+  likeOpacity;
+  dislikeOpacity;
+  nextCardOpacity;
+  nextCardScale;
+  PanResponder;
+
+  constructor(props) {
     super(props);
-    this.position = new Animated.ValueXY();
     this.state = {
       currentIndex: 0,
-      id: '',
-      pageID: '',
-      url: [],
-      extract: [],
-      like: [],
       dogImages: [],
     };
 
@@ -68,48 +69,39 @@ export default class Screen1 extends Component {
       outputRange: [1, 0.8, 1],
       extrapolate: 'clamp',
     });
+
+    this.PanResponder = PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onPanResponderMove: (evt, gestureState) => {
+        this.position.setValue({ x: gestureState.dx, y: gestureState.dy });
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        if (gestureState.dx > 50) {
+          Animated.spring(this.position, {
+            toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
+            useNativeDriver: false,
+          }).start(() => this.nextImage());
+        } else if (gestureState.dx < -120) {
+          Animated.spring(this.position, {
+            toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
+            useNativeDriver: false,
+          }).start(() => this.nextImage());
+        } else {
+          Animated.spring(this.position, {
+            toValue: { x: 0, y: 0 },
+            friction: 4,
+            useNativeDriver: false,
+          }).start();
+        }
+      },
+    });
   }
 
-  // componentDidMount = () => {
-  //   fetch(`https://pl.wikipedia.org/api/rest_v1/page/random/summary`)
-  //     .then((res) => res.json())
-  //     .then((wiki) =>
-  //       this.setState({
-  //         url: wiki.thumbnail.source,
-  //         extract: wiki.extract,
-  //         id: wiki.pageid,
-  //       })
-  //     )
-  //     .catch((err) => console.log(err));
-  // };
-
-
-
-
-  // componentDidMount() {
-  //   this.fetchDogImages();
-  // }
-
-
   componentDidMount() {
-    console.log(this.state.dogImages.length);
     if (this.state.dogImages.length === 0) {
       this.fetchDogImages();
     }
   }
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   // Check if dogImages array has been updated
-  //   if (this.state.dogImages !== prevState.dogImages) {
-  //     // Perform any additional actions here after dogImages is updated
-  //     console.log('Dog images updated:', this.state.dogImages);
-  //     // You can call fetchDogImages again if needed
-  //     // this.fetchDogImages();
-  //   }
-  // }
-
-  
-
 
   fetchDogImages = () => {
     fetch('https://dog.ceo/api/breeds/image/random/10')
@@ -126,237 +118,71 @@ export default class Screen1 extends Component {
       .catch((error) => console.error('Error fetching dog images:', error));
   };
 
-
-
-
-
-  mount() {
-    this.PanResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onPanResponderMove: (evt, gestureState) => {
-        this.position.setValue({ x: gestureState.dx, y: gestureState.dy });
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        if (undefined) {
-          this.setState({
-            currentIndex: 0,
-          });
-          // this.componentDidMount();
-          console.log(this.state.currentIndex);
+  nextImage = () => {
+    this.setState(
+      (prevState) => ({ currentIndex: prevState.currentIndex + 1 }),
+      () => {
+        if (this.state.currentIndex >= this.state.dogImages.length - 1) {
+          this.fetchDogImages();
         }
-
-        if (gestureState.dx > 50) {
-          this.setState({ like: { uri: `${this.state.url}` } });
-          Animated.spring(this.position, {
-              toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
-              useNativeDriver: false
-          }).start(() => {
-            this.setState(
-              { currentIndex: this.state.currentIndex + 1 },
-              () => {
-                this.position.setValue({ x: 0, y: 0 });
-                console.log(this.state.currentIndex, SCREEN_WIDTH);
-              }
-            );
-          });
-        } else if (gestureState.dy >= 0 || gestureState.dy <= 0) {
-          Animated.spring(this.position, {
-              toValue: { x: SCREEN_WIDTH, y: gestureState.dy },
-              useNativeDriver: false
-          }).start(() => {
-            this.setState({ currentIndex: '' }, () => {
-              this.position.setValue({ x: 0, y: 0 });
-              console.log(this.state.currentIndex);
-            });
-          });
-        } else if (gestureState.dx < -120) {
-          Animated.spring(this.position, {
-            toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
-            useNativeDriver: false,
-          }).start(() => {
-            this.setState(
-              (prevState) => ({
-                currentIndex: prevState.currentIndex + 1,
-              }),
-              () => {
-                if (this.state.currentIndex >= this.state.dogImages.length - 1) {
-                  // Fetch new dog images when reaching the end of the array
-                  // this.fetchDogImages();
-                }
-                this.position.setValue({ x: 0, y: 0 });
-                console.log(this.state.currentIndex);
-              }
-            );
-          });
-        
-    
-        }
-
-        if (this.state.currentIndex >= 0) {
-          this.setState({
-            currentIndex: this.state.currentIndex - (this.state.currentIndex + 1),
-            url: [],
-          });
-          // this.componentDidMount();
-        } else {
-          Animated.spring(this.position, {
-              toValue: { x: 0, y: 0 },
-              friction: 4,
-              useNativeDriver: false
-          }).start();
-        }
-      },
-    });
-  }
-
-  // renderUsers = () => {
-  //   let Users = [
-  //     {
-  //       id: `${this.state.id}`,
-  //       uri: { uri: `${this.state.url}` },
-  //       Text: `${this.state.extract}`,
-  //     },
-  //   ];
-
+        this.position.setValue({ x: 0, y: 0 });
+      }
+    );
+  };
 
   renderUsers = () => {
-    let Users = this.state.dogImages.map((imageUrl, index) => ({
-      id: `${index}`,  // Using index as id for simplicity
-      uri: { uri: imageUrl },
-    }));
-
-    console.log(Users, this.state.like, this.state.currentIndex);
-    return Users.map((item, i) => {
-      if (i < this.state.currentIndex) {
+    return this.state.dogImages.map((imageUrl, index) => {
+      if (index < this.state.currentIndex) {
         return null;
-      } else if (i == this.state.currentIndex) {
+      } else if (index === this.state.currentIndex) {
         return (
           <Animated.View
             {...this.PanResponder.panHandlers}
-            key={item.id}
+            key={index}
             style={[
               this.rotateAndTranslate,
               { height: SCREEN_HEIGHT - 120, width: SCREEN_WIDTH, padding: 10, position: 'absolute' },
             ]}
           >
-            <Animated.View
-              style={{
-                opacity: this.likeOpacity,
-                transform: [{ rotate: '-30deg' }],
-                position: 'absolute',
-                top: 50,
-                left: 40,
-                zIndex: 1000,
-              }}
-            >
-              <Text
-                style={{
-                  borderWidth: 1,
-                  borderColor: 'green',
-                  color: 'green',
-                  fontSize: 32,
-                  fontWeight: '800',
-                  padding: 10,
-                }}
-              >
-                LIKE
+            {/* <TouchableOpacity onPress={this.nextImage}>
+              <View style={{ backgroundColor: 'transparent', position: 'absolute', bottom: 20, left: 20, zIndex: 1000 }} />
+              <Text style={{ color: 'green', fontSize: 32, fontWeight: '800', padding: 10 }}>LIKE</Text>
+            </TouchableOpacity> */}
+            <Animated.View style={{ opacity: this.likeOpacity, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
+              <Text style={{ borderWidth: 1, borderColor: 'green', color: 'green', fontSize: 32, fontWeight: '800', padding: 10 }}>
+                UwU
               </Text>
             </Animated.View>
-
-            <Animated.View
-              style={{
-                opacity: this.dislikeOpacity,
-                transform: [{ rotate: '30deg' }],
-                position: 'absolute',
-                top: 50,
-                right: 40,
-                zIndex: 1000,
-              }}
-            >
-              <Text
-                style={{
-                  borderWidth: 1,
-                  borderColor: 'red',
-                  color: 'red',
-                  fontSize: 32,
-                  fontWeight: '800',
-                  padding: 10,
-                }}
-              >
-                NOPE
+            <Animated.View style={{ opacity: this.dislikeOpacity, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
+              <Text style={{ borderWidth: 1, borderColor: 'red', color: 'red', fontSize: 32, fontWeight: '800', padding: 10 }}>
+                ARA ARA
               </Text>
             </Animated.View>
-
-            <Image style={styles.img} source={item.uri} />
+            <Image style={styles.img} source={{ uri: imageUrl }} />
             <ScrollView>
-              <Text style={styles.tex}>{item.Text}</Text>
+              <Text style={styles.tex}>{/* Add your text here */}</Text>
             </ScrollView>
           </Animated.View>
         );
       } else {
         return (
           <Animated.View
-            key={item.id}
+            key={index}
             style={[
-              {
-                opacity: this.nextCardOpacity,
-                transform: [{ scale: this.nextCardScale }],
-                height: SCREEN_HEIGHT - 120,
-                width: SCREEN_WIDTH,
-                padding: 10,
-                position: 'absolute',
-              },
+              { opacity: this.nextCardOpacity, transform: [{ scale: this.nextCardScale }], height: SCREEN_HEIGHT - 120, width: SCREEN_WIDTH, padding: 10, position: 'absolute' },
             ]}
           >
-            <Animated.View
-              style={{
-                opacity: 0,
-                transform: [{ rotate: '-30deg' }],
-                position: 'absolute',
-                top: 50,
-                left: 40,
-                zIndex: 1000,
-              }}
-            >
-              <Text
-                style={{
-                  borderWidth: 1,
-                  borderColor: 'green',
-                  color: 'green',
-                  fontSize: 32,
-                  fontWeight: '800',
-                  padding: 10,
-                }}
-              >
+            <Animated.View style={{ opacity: 0, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
+              <Text style={{ borderWidth: 1, borderColor: 'green', color: 'green', fontSize: 32, fontWeight: '800', padding: 10 }}>
                 LIKE
               </Text>
             </Animated.View>
-
-            <Animated.View
-              style={{
-                opacity: 0,
-                transform: [{ rotate: '30deg' }],
-                position: 'absolute',
-                top: 50,
-                right: 40,
-                zIndex: 1000,
-              }}
-            >
-              <Text
-                style={{
-                  borderWidth: 1,
-                  borderColor: 'red',
-                  color: 'red',
-                  fontSize: 32,
-                  fontWeight: '800',
-                  padding: 10,
-                }}
-              >
-                NOPE
+            <Animated.View style={{ opacity: 0, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
+              <Text style={{ borderWidth: 1, borderColor: 'red', color: 'red', fontSize: 32, fontWeight: '800', padding: 10 }}>
+                NOPEee
               </Text>
             </Animated.View>
-
-            <Image style={styles.img} source={item.uri} />
+            <Image style={styles.img} source={{ uri: imageUrl }} />
             <Text style={styles.tex2} />
           </Animated.View>
         );
@@ -365,11 +191,9 @@ export default class Screen1 extends Component {
   };
 
   render() {
-    this.mount();
     return (
       <View style={{ flex: 1 }}>
         <View style={{ height: 60 }}></View>
-
         <View style={{ flex: 1 }}>{this.renderUsers()}</View>
         <View style={{ height: 60 }}></View>
       </View>
