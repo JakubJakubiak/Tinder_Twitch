@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Platform, Text, Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const TwitchAuthLogin = () => {
@@ -35,13 +35,21 @@ const TwitchAuthLogin = () => {
       console.error('Error fetching page content:', error);
     }
   };
-  const webViewURLObject = JSON.parse(webViewURL);
+
+
+
+  const webViewURLObject = webViewURL !== "" && isJSON(webViewURL)
+    ? JSON.parse(webViewURL)
+    : webViewURLObject;
+
+
   return (
     webViewURL && isJSON(webViewURL) ?(  
     <View>
       <Text>{webViewURLObject.accessToken}</Text>
       <Text>{webViewURLObject.refreshToken}</Text>
-      <Image source={{ uri: webViewURLObject.image }} style={{ width: 100, height: 100 }} />
+      <Text>{webViewURLObject.displayName}</Text>
+      <Image source={{ uri: webViewURLObject.image }} style={{ width: 200, height: 200, borderRadius:50 }} />
     </View>
     ):
     (
