@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Button } from 'react-native';
 import { WebView } from 'react-native-webview';
+// import CookieManager from 'react-native-cookies';
+
+// https://tinder-twitch.firebaseapp.com/__/auth/handler
 
 const TwitchAuthLogin = () => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
@@ -36,16 +39,29 @@ const TwitchAuthLogin = () => {
     }
   };
 
+  const handleLogout = () => {
+    // Perform logout action here
+    // For example, you can reset the webViewURL to initialURL
+    // CookieManager.clearAll();
 
+    const clearDataScript = `
+      document.cookie = '';
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+    `;
+
+    setInjectedJavaScript(clearDataScript);
+    setWebViewURL(initialURL);
+  };
 
   const webViewURLObject = webViewURL !== "" && isJSON(webViewURL)
     ? JSON.parse(webViewURL)
     : webViewURLObject;
 
-
   return (
     webViewURL && isJSON(webViewURL) ?(  
     <View>
+      <Button title="Logout" onPress={handleLogout} /> 
       <Text>{webViewURLObject.accessToken}</Text>
       <Text>{webViewURLObject.refreshToken}</Text>
       <Text>{webViewURLObject.displayName}</Text>

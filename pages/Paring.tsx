@@ -14,7 +14,7 @@ import {
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-export default class Screen1 extends Component {
+export default class Paring extends Component {
   position = new Animated.ValueXY();
   rotate;
   rotateAndTranslate;
@@ -24,7 +24,7 @@ export default class Screen1 extends Component {
   nextCardScale;
   PanResponder;
 
-  constructor(props) {
+  constructor(props: {} | Readonly<{}>) {
     super(props);
     this.state = {
       currentIndex: 0,
@@ -131,7 +131,7 @@ export default class Screen1 extends Component {
   };
 
   renderUsers = () => {
-    return this.state.dogImages.map((imageUrl, index) => {
+    return this.state.dogImages.map((imageUrl: String, index: React.Key) => {
       if (index < this.state.currentIndex) {
         return null;
       } else if (index === this.state.currentIndex) {
@@ -159,9 +159,9 @@ export default class Screen1 extends Component {
               </Text>
             </Animated.View>
             <Image style={styles.img} source={{ uri: imageUrl }} />
-            <ScrollView>
-              <Text style={styles.tex}>{/* Add your text here */}</Text>
-            </ScrollView>
+            {/* <ScrollView>
+              <Text style={styles.tex}>Add your text here</Text>
+            </ScrollView> */}
           </Animated.View>
         );
       } else {
@@ -169,21 +169,17 @@ export default class Screen1 extends Component {
           <Animated.View
             key={index}
             style={[
-              { opacity: this.nextCardOpacity, transform: [{ scale: this.nextCardScale }], height: SCREEN_HEIGHT - 120, width: SCREEN_WIDTH, padding: 10, position: 'absolute' },
+              {
+                opacity: this.nextCardOpacity,
+                transform: [{ scale: this.nextCardScale }],
+                height: SCREEN_HEIGHT - 120,
+                width: SCREEN_WIDTH,
+                padding: 10,
+                position: 'absolute',
+              },
             ]}
           >
-            <Animated.View style={{ opacity: 0, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 1, borderColor: 'green', color: 'green', fontSize: 32, fontWeight: '800', padding: 10 }}>
-                LIKE
-              </Text>
-            </Animated.View>
-            <Animated.View style={{ opacity: 0, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 1, borderColor: 'red', color: 'red', fontSize: 32, fontWeight: '800', padding: 10 }}>
-                NOPEee
-              </Text>
-            </Animated.View>
             <Image style={styles.img} source={{ uri: imageUrl }} />
-            <Text style={styles.tex2} />
           </Animated.View>
         );
       }

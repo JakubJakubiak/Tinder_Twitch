@@ -1,15 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 
-import Screen1 from './pages/Screen1';
+import Paring from './pages/Paring';
 import TwitchAuthLogin from './pages/TwitchAuthLogin';
+import SendMessageScreen from './pages/SendMessageScreen';
+import analytics from '@react-native-firebase/analytics';
 
 import {
   SafeAreaView,
@@ -28,6 +23,12 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+
+
+// analytics().setAnalyticsCollectionEnabled(true);
+
+// AppRegistry.registerComponent('Tinder_Twitch', () => Tinder_Twitch);
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -69,8 +70,9 @@ function App(): JSX.Element {
   return (
     <View >
     <View style={styles.container}></View >
-       <Screen1/>
-       {/* <TwitchAuthLogin/> */}
+      {/* <Paring/> */}
+      {/* <TwitchAuthLogin/> */}
+      <SendMessageScreen />
      </View>
   );
 }
