@@ -4,7 +4,7 @@ import type {PropsWithChildren} from 'react';
 import Paring from './pages/Paring';
 import TwitchAuthLogin from './pages/TwitchAuthLogin';
 import SendMessageScreen from './pages/SendMessageScreen';
-import analytics from '@react-native-firebase/analytics';
+// import analytics from '@react-native-firebase/analytics';
 
 import {
   SafeAreaView,
@@ -71,8 +71,8 @@ function App(): JSX.Element {
     <View >
     <View style={styles.container}></View >
       {/* <Paring/> */}
-      {/* <TwitchAuthLogin/> */}
-      <SendMessageScreen />
+      <TwitchAuthLogin/>
+      {/* <SendMessageScreen /> */}
      </View>
   );
 }
