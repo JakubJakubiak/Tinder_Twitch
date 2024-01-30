@@ -70,8 +70,8 @@ function App(): JSX.Element {
   return (
     <View >
     <View style={styles.container}></View >
-      {/* <Paring/> */}
-      <TwitchAuthLogin/>
+      <Paring/>
+      {/* <TwitchAuthLogin/> */}
       {/* <SendMessageScreen /> */}
      </View>
   );

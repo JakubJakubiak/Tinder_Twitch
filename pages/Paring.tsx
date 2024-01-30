@@ -104,12 +104,13 @@ export default class Paring extends Component {
   }
 
   fetchDogImages = () => {
-    fetch('https://dog.ceo/api/breeds/image/random/10')
+    fetch('https://end-point-small.vercel.app/firbaselist')
       .then((res) => res.json())
       .then((data) => {
-        if (data.status === 'success') {
+        if (Array.isArray(data)) {
+          const dogImages = data.map((user) => user.image); 
           this.setState((prevState) => ({
-            dogImages: [...prevState.dogImages, ...data.message],
+            dogImages: [...prevState.dogImages, ...dogImages], 
           }));
         } else {
           console.error('Failed to fetch dog images:', data.message);
