@@ -80,12 +80,18 @@ export default class Paring extends Component {
           Animated.spring(this.position, {
             toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
             useNativeDriver: false,
-          }).start(() => this.nextImage());
+          }).start(() => {
+          this.nextImage();
+          this.like();
+        });
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
             toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
             useNativeDriver: false,
-          }).start(() => this.nextImage());
+          }).start(() => {
+            this.nextImage();
+            this.Nolike();
+          });
         } else {
           Animated.spring(this.position, {
             toValue: { x: 0, y: 0 },
@@ -130,6 +136,16 @@ export default class Paring extends Component {
       }
     );
   };
+
+  like = ()=> {
+    console.log("like");
+    /// add id users 
+    // do bazy danych dodac ze usersid polusbil inne user id a ten drugi urztkon gdy polubi zdiec sprac czy jusz polubil ten drugi 
+    //wszstkie bedeom rpzhowynae wjdnym pukcie jjako pary
+  }
+  Nolike = ()=> {
+    console.log("Nolike");
+  }
 
   renderUsers = () => {
     return this.state.dogImages.map((imageUrl: String, index: React.Key) => {
