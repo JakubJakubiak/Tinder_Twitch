@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, Image, Button } from 'react-native';
 import { WebView } from 'react-native-webview';
-// import CookieManager from 'react-native-cookies';
+import ButoaddLogin from './ButoaddLogin';
+import Paring from './Paring';
 
-// https://tinder-twitch.firebaseapp.com/__/auth/handler
+
+import {  db  } from './config/firebase';
+import { setDoc,doc} from 'firebase/firestore';
+
+
+
+
+import {
+  collection,
+  query,
+  where,
+  getDocs
+} from 'firebase/firestore';
+import { database } from './config/firebase';
 
 const TwitchAuthLogin = () => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
@@ -18,6 +32,7 @@ const TwitchAuthLogin = () => {
     }
   };
 
+  
   const onNavigationStateChange = async (navState: { url: React.SetStateAction<string>; loading: any; }) => {
     console.log(navState.url);
     setWebViewURL(navState.url);
@@ -33,7 +48,7 @@ const TwitchAuthLogin = () => {
       const htmlContent = await response.text();
 
       if (isJSON(htmlContent)) setWebViewURL(htmlContent);
-      console.log('Page Content:', htmlContent);
+
     } catch (error) { 
       console.error('Error fetching page content:', error);
     }
@@ -54,18 +69,36 @@ const TwitchAuthLogin = () => {
     setWebViewURL(initialURL);
   };
 
-  const webViewURLObject = webViewURL !== "" && isJSON(webViewURL)
-    ? JSON.parse(webViewURL)
-    : webViewURLObject;
+
+
+
+  // const webViewURLObject = webViewURL !== "" && isJSON(webViewURL)
+  //   ? JSON.parse(webViewURL)
+  //   : webViewURLObject;
+
+    const webViewURLObject = isJSON(webViewURL) ? JSON.parse(webViewURL) : null;
 
   return (
-    webViewURL && isJSON(webViewURL) ?(  
-    <View>
-      <Button title="Logout" onPress={handleLogout} /> 
-      <Text>{webViewURLObject.accessToken}</Text>
-      <Text>{webViewURLObject.refreshToken}</Text>
-      <Text>{webViewURLObject.displayName}</Text>
-      <Image source={{ uri: webViewURLObject.image }} style={{ width: 200, height: 200, borderRadius:50 }} />
+    webViewURL && isJSON(webViewURL) && webViewURLObject.userData ? (   
+      <View>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: 'black', paddingHorizontal: 10, paddingVertical: 5 }}>
+      <View>
+        <Text>{webViewURLObject.userData.userId}</Text>
+        <Text>{webViewURLObject.userData.displayName}</Text>
+        <Text>{webViewURLObject.userData.bio}</Text>
+      </View>
+      <Image
+        source={{ uri: webViewURLObject.userData.image }}
+        style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 10 }}
+      />
+  
+    </View>
+
+
+    <ButoaddLogin user={webViewURLObject.userData} />
+    {/* <Paring userId={webViewURLObject.userData.userId}  /> */}
+    
+    
     </View>
     ):
     (

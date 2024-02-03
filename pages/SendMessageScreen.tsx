@@ -1,6 +1,37 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Button } from 'react-native';
 // import { database } from '@react-native-firebase/database';
+
+
+import {
+  collection,
+  addDoc,
+  orderBy,
+  query,
+  onSnapshot
+} from 'firebase/firestore';
+
+import { database } from './config/firebase';
+
+const addDataToFirestore = async () => {
+  try {
+    const usersCollection = collection(database, 'users');
+
+    const userData = {
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      age: 30,
+    };
+
+
+    const docRef = await addDoc(usersCollection, userData);
+    console.log('Document written with ID: ', docRef.id);
+  } catch (error) {
+    console.error('Error adding document: ', error);
+  }
+};
+
+
 
 const SendMessageScreen = ({ route }) => {
   const recipientId = route?.params?.recipientId || '';
@@ -18,26 +49,28 @@ const SendMessageScreen = ({ route }) => {
         //     timestamp: database.ServerValue.TIMESTAMP,
         //   });
 
-        // Zresetowanie wartości pola tekstowego
+      
         setMessageText('');
       } else {
-        console.warn('Wpisz wiadomość');
+        console.warn('Type your message');
       }
     } catch (error) {
-      console.error('Błąd podczas wysyłania wiadomości:', error);
+      console.error('Error while sending a message:', error);
     }
   };
 
   return (
     <View>
       <TextInput
-        placeholder="Wpisz wiadomość"
+        placeholder="Type your message"
         value={messageText}
         onChangeText={setMessageText}
       />
       <TouchableOpacity onPress={sendMessage}>
-        <Text>Wyślij wiadomość</Text>
+        <Text>Send a message</Text>
       </TouchableOpacity>
+
+      <Button title="Logout" onPress={addDataToFirestore} /> 
     </View>
   );
 };

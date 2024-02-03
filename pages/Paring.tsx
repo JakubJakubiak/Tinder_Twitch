@@ -31,6 +31,7 @@ export default class Paring extends Component {
       dogImages: [],
     };
 
+
     this.rotate = this.position.x.interpolate({
       inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
       outputRange: ['-10deg', '0deg', '10deg'],
@@ -110,11 +111,17 @@ export default class Paring extends Component {
   }
 
   fetchDogImages = () => {
+    const { userId } = this.props;
     fetch('https://end-point-small.vercel.app/firbaselist')
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const dogImages = data.map((user) => user.image); 
+          const filteredDogImages = data.filter(user => user.userId !== userId);
+          const dogImages = filteredDogImages.map((user) => ({
+            image: user.image,
+            userId: user.userId,
+            displayName: user.displayName,
+          }));
           this.setState((prevState) => ({
             dogImages: [...prevState.dogImages, ...dogImages], 
           }));
@@ -148,7 +155,7 @@ export default class Paring extends Component {
   }
 
   renderUsers = () => {
-    return this.state.dogImages.map((imageUrl: String, index: React.Key) => {
+    return this.state.dogImages.map((user, index) => {
       if (index < this.state.currentIndex) {
         return null;
       } else if (index === this.state.currentIndex) {
@@ -175,10 +182,10 @@ export default class Paring extends Component {
                 ARA ARA
               </Text>
             </Animated.View>
-            <Image style={styles.img} source={{ uri: imageUrl }} />
-            {/* <ScrollView>
-              <Text style={styles.tex}>Add your text here</Text>
-            </ScrollView> */}
+            <Image style={styles.img} source={{ uri: user.image }} />
+            <ScrollView>
+              <Text style={styles.tex}>{user.displayName}</Text>
+            </ScrollView>
           </Animated.View>
         );
       } else {
@@ -196,7 +203,10 @@ export default class Paring extends Component {
               },
             ]}
           >
-            <Image style={styles.img} source={{ uri: imageUrl }} />
+            <Image style={styles.img} source={{ uri: user.image }} />
+            <ScrollView>
+              <Text style={styles.tex}>{user.displayName}</Text>
+            </ScrollView>
           </Animated.View>
         );
       }
@@ -204,6 +214,7 @@ export default class Paring extends Component {
   };
 
   render() {
+
     return (
       <View style={{ flex: 1 }}>
         <View style={{ height: 60 }}></View>
@@ -217,8 +228,6 @@ export default class Paring extends Component {
 const styles = StyleSheet.create({
   img: {
     flex: 1,
-    height: null,
-    width: null,
     resizeMode: 'cover',
     borderRadius: 20,
   },

@@ -1,9 +1,19 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 
 import Paring from './pages/Paring';
 import TwitchAuthLogin from './pages/TwitchAuthLogin';
 import SendMessageScreen from './pages/SendMessageScreen';
+
+import ExploreScreen from './pages/Explore';
+import Chat from './pages/chat';
+
+import Register from './pages/Register';
+
+import MessageList from './pages/MessageList';
+
 // import analytics from '@react-native-firebase/analytics';
 
 import {
@@ -26,9 +36,7 @@ import {
 
 
 
-// analytics().setAnalyticsCollectionEnabled(true);
-
-// AppRegistry.registerComponent('Tinder_Twitch', () => Tinder_Twitch);
+const Stack = createNativeStackNavigator();
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -70,10 +78,16 @@ function App(): JSX.Element {
   return (
     <View >
     <View style={styles.container}></View >
-      <Paring/>
-      {/* <TwitchAuthLogin/> */}
+      {/* <Paring/>  */}
+      <TwitchAuthLogin/> 
+      {/* <MessageList /> */}
       {/* <SendMessageScreen /> */}
+      {/* <MessageList  /> */}
+      {/* <MessageList userId="inulive" /> */}
+   
      </View>
+
+
   );
 }
 
