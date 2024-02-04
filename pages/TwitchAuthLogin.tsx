@@ -3,11 +3,15 @@ import { View, Text, Image, Button } from 'react-native';
 import { WebView } from 'react-native-webview';
 import ButoaddLogin from './ButoaddLogin';
 import Paring from './Paring';
+import Explore from './Explore';
+import MessageList from './MessageList';
+import Chat from './chat';
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 
 import {  db  } from './config/firebase';
 import { setDoc,doc} from 'firebase/firestore';
-
 
 
 
@@ -32,7 +36,7 @@ const TwitchAuthLogin = () => {
     }
   };
 
-  
+  const Tab = createBottomTabNavigator();
   const onNavigationStateChange = async (navState: { url: React.SetStateAction<string>; loading: any; }) => {
     console.log(navState.url);
     setWebViewURL(navState.url);
@@ -95,8 +99,17 @@ const TwitchAuthLogin = () => {
     </View>
 
 
-    <ButoaddLogin user={webViewURLObject.userData} />
+    {/* <ButoaddLogin user={webViewURLObject.userData} /> */}
     {/* <Paring userId={webViewURLObject.userData.userId}  /> */}
+    {/* <Explore /> */}
+
+    <MessageList route={webViewURLObject.userData}  />
+
+    {/* <Chat user={webViewURLObject.userData}  /> */}
+
+    
+    
+
     
     
     </View>

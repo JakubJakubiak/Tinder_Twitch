@@ -1,6 +1,9 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+
 
 
 import Paring from './pages/Paring';
@@ -74,18 +77,29 @@ function App(): JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-
+  const Stack = createNativeStackNavigator();
   return (
     <View >
-    <View style={styles.container}></View >
-      {/* <Paring/>  */}
-      <TwitchAuthLogin/> 
-      {/* <MessageList /> */}
-      {/* <SendMessageScreen /> */}
-      {/* <MessageList  /> */}
-      {/* <MessageList userId="inulive" /> */}
-   
+      <View style={styles.container}></View >
+        {/* <Paring/>  */}
+        <TwitchAuthLogin/> 
+        {/* <MessageList /> */}
+        {/* <SendMessageScreen /> */}
+        {/* <MessageList  /> */}
+        {/* <MessageList userId="inulive" /> */}
      </View>
+
+//     <NavigationContainer>
+//   <Stack.Navigator>
+//     {/* Tutaj umieść swoje Stack.Screen */}
+//     <Stack.Screen name='Login' component={Login} options={() => ({
+//       headerBackVisible: false,
+//       headerShown: false,
+//     })}/>
+//     {/* Pozostałe Stack.Screen */}
+//   </Stack.Navigator>
+// </NavigationContainer>
+
 
 
   );

@@ -14,12 +14,12 @@ const ButoaddLogin = ({ user }) => {
         uid: user.userId,
         name: user.displayName,
         req: ["22", "l44l"],
-        realFriend: [],
+        realFriend: ["przyjaciel1","przyjaciel2"],
         avatar: user.image
     };
 
-        await updateDoc(userDocRef, userData);
-        // await setDoc(userDocRef, userData);
+        // await updateDoc(userDocRef, userData);
+        await setDoc(userDocRef, userData);
         console.log('Document written successfully');
     } catch (error) {
         console.error('Error adding document: ', error);

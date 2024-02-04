@@ -1,6 +1,6 @@
 import { collection, addDoc, getDocs, query, orderBy, onSnapshot,where,updateDoc,doc,arrayUnion,collectionGroup} from 'firebase/firestore';
 import React, { useEffect, useState,useLayoutEffect,Fragment} from 'react';
-import { auth, db } from '../firebase';
+import { auth,  db  } from './config/firebase';
 
 import {
   SafeAreaView,
