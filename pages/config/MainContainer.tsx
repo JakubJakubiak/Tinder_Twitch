@@ -11,6 +11,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import MessageScreen from '../MessageList';
 import ButoaddLogin from '../ButoaddLogin';
 import Paring from '../Paring';
+import Chat from '../chat';
 
 import TwitchAuthLogin from '../TwitchAuthLogin';
 
@@ -53,30 +54,49 @@ function MainContainer() {
               })}
               >
               <Tab.Screen name={home} component={Paring} />
-              <Tab.Screen name={chat} component={ChatStackScreen} /> 
+              <Tab.Screen name={chat} component={ChatStackScreen}  /> 
           </Tab.Navigator>
         </NavigationContainer>
     );
 }
 
-// Komponent, który renderuje Stack.Navigator dla zakładki 'chat'
+
 function ChatStackScreen({ navigation }) {
   return (
       <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomeNoScreen} />
-          <Stack.Screen name="Details" component={DetailsScreen} /> 
+          <Stack.Screen name="Home" component={HomeNoScreen}  />
+          <Stack.Screen name="Details" component={DetailsScreen}  options={{ headerTitle: null }} /> 
+          <Stack.Screen name="Chat" component={Chat} />
       </Stack.Navigator>
   );
 }
 
-function HomeNoScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-      <Button
+        function HomeNoScreen({ navigation }) {
+          return (
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <MessageScreen
+             
+                navigation={navigation} 
+                route={{
+                    "accessToken": "denu7h8opnxyot",
+                    "bio": "",
+                    "displayName": "inulive",
+                    "image": "https://static-cdn.jtvnw.net/jtv_user_pictures/2a9fd65f-4ec6-409a-af68-9867746cb77a-profile_image-300x300.png",
+                    "refreshToken": "91838xoeo4vj31zo34cmenjlkkp4k4k",
+                    "userId": "417210681"
+                } }    onPress={() => navigation.navigate('Chat', { user: {
+                  "accessToken": "denu7h8opnxyot",
+                  "bio": "",
+                  "displayName": "inulive",
+                  "image": "https://static-cdn.jtvnw.net/jtv_user_pictures/2a9fd65f-4ec6-409a-af68-9867746cb77a-profile_image-300x300.png",
+                  "refreshToken": "91838xoeo4vj31zo34cmenjlkkp4k4k",
+                  "userId": "417210681"
+              } })} />
+        {/* <ButoaddLogin /> */}
+      {/* <Button
         title="Go to Details"
         onPress={() => navigation.navigate('Details')}
-      />
+      /> */}
     </View>
   );
 }

@@ -24,6 +24,9 @@ import {
 const MessageScreen = ({navigation,route})=>{
     const dimensions = Dimensions.get('window');
     const imageWidth = dimensions.width;
+
+    console.log(" ///////////////////navigation//////////")
+    console.log(navigation)
     // const [users, setUsers] = useState(null)
 
     // const getUsers = async ()=> {
@@ -105,8 +108,9 @@ const MessageScreen = ({navigation,route})=>{
       <FlatList
       data={notiUsers}
       renderItem={({ item }) => (
-        // <TouchableOpacity onPress={() => navigation.navigate('Chat', { name: item.displayName, uid: item.userId, avatar: item.image })}>
-        <TouchableOpacity onPress={() => navigation.push('Chat')}>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Chat', { name: item.displayName, uid: item.userId, avatar: item.image })}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate('Chat')}> */}
           {console.log(item.uid)}
           <View style={styles.card}>
             {/* <Image style={styles.userImageST} source={{ uri: item.image }} /> */}
@@ -128,6 +132,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        
     },
   Container: {
     marginTop: 32,
@@ -140,6 +145,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     flexDirection: 'row',
     flexWrap: 'wrap',
+    backgroundColor: '#000'
   },
   sectionTitle: {
     fontSize: 24,
@@ -148,6 +154,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    
   },
   userImage: {
     paddingTop: 15,
@@ -183,6 +190,7 @@ const styles = StyleSheet.create({
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
     backgroundColor: '#ffffff69', 
+    
   },
   msgTime: {
     textAlign: 'right',

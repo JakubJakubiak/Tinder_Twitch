@@ -11,7 +11,7 @@ import { GiftedChat,InputToolbar,SystemMessage,Bubble } from 'react-native-gifte
 
 
 const Chat = ({ navigation, user }) => {
-    console.log("/////////");
+    console.log("///user//////");
     console.log(user);
     const c_uid = auth?.currentUser.uid;
     const t_uid = user.userId;
