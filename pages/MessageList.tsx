@@ -105,7 +105,8 @@ const MessageScreen = ({navigation,route})=>{
       <FlatList
       data={notiUsers}
       renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate('Chat', { name: item.displayName, uid: item.userId, avatar: item.image })}>
+        // <TouchableOpacity onPress={() => navigation.navigate('Chat', { name: item.displayName, uid: item.userId, avatar: item.image })}>
+        <TouchableOpacity onPress={() => navigation.push('Chat')}>
           {console.log(item.uid)}
           <View style={styles.card}>
             {/* <Image style={styles.userImageST} source={{ uri: item.image }} /> */}

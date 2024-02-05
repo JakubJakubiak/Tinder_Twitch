@@ -15,6 +15,8 @@ import {  db  } from './config/firebase';
 import { setDoc,doc} from 'firebase/firestore';
 
 
+import { useUserData } from './UserDataContext';
+
 
 import {
   collection,
@@ -27,6 +29,8 @@ import { database } from './config/firebase';
 const TwitchAuthLogin = () => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
   const [webViewURL, setWebViewURL] = useState(initialURL);
+
+  const { userData, setUserData } = useUserData();
 
   const isJSON = (str: React.SetStateAction<string>) => {
     try {
@@ -80,11 +84,19 @@ const TwitchAuthLogin = () => {
 //////////////// Zresetować po zalogowaniu odświeżenie może nie zadziałać. ///////////////
 
     const webViewURLObject = isJSON(webViewURL) ? JSON.parse(webViewURL): null;
+  
+    const GitwebViewURLObject = webViewURLObject 
+    && webViewURLObject.userData 
+    // && typeof webViewURLObject.userData === 'object' 
+    && Object.keys(webViewURLObject)
+    ? webViewURLObject.userData : null;
 
-    // console.log(webViewURLObject.userData);
+  
+    // console.log(webViewURLObject.length);
 
   return (
-    webViewURL && isJSON(webViewURL) && webViewURLObject.userData ? ( 
+    // webViewURL && isJSON(webViewURL) && webViewURLObject.userData ? ( 
+      GitwebViewURLObject ? ( 
       <View>
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: 'black', paddingHorizontal: 10, paddingVertical: 5 }}>
       <View>
@@ -100,26 +112,7 @@ const TwitchAuthLogin = () => {
     </View>
 
 
-    {/* <SaveData children={webViewURLObject.userData}  /> */}
-
-
-    {/* <MainContainer/> */}
-    
-
-    {/* <ButoaddLogin user={webViewURLObject.userData} /> */}
-    {/* <Paring userId={webViewURLObject.userData.userId}  /> */}
-    {/* <Explore /> */}
-
-    {/* <MessageList route={webViewURLObject.userData}  /> */}
-    
-
-    {/* <Chat user={webViewURLObject.userData}  /> */}
-
-    
-    
-
-    
-    
+  
     </View>
     ):
     (
