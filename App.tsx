@@ -3,8 +3,10 @@ import type {PropsWithChildren} from 'react';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-
+import MainContainer from './pages/config/MainContainer';
 
 import Paring from './pages/Paring';
 import TwitchAuthLogin from './pages/TwitchAuthLogin';
@@ -17,6 +19,8 @@ import Register from './pages/Register';
 
 import MessageList from './pages/MessageList';
 
+
+import { UserDataProvider } from './pages/UserDataContext';
 // import analytics from '@react-native-firebase/analytics';
 
 import {
@@ -39,7 +43,7 @@ import {
 
 
 
-const Stack = createNativeStackNavigator();
+
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -77,28 +81,32 @@ function App(): JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  const Stack = createNativeStackNavigator();
-  return (
-    <View >
-      <View style={styles.container}></View >
-        {/* <Paring/>  */}
-        <TwitchAuthLogin/> 
-        {/* <MessageList /> */}
-        {/* <SendMessageScreen /> */}
-        {/* <MessageList  /> */}
-        {/* <MessageList userId="inulive" /> */}
-     </View>
+  
 
-//     <NavigationContainer>
-//   <Stack.Navigator>
-//     {/* Tutaj umieść swoje Stack.Screen */}
-//     <Stack.Screen name='Login' component={Login} options={() => ({
-//       headerBackVisible: false,
-//       headerShown: false,
-//     })}/>
-//     {/* Pozostałe Stack.Screen */}
-//   </Stack.Navigator>
-// </NavigationContainer>
+  return (
+    // <MainContainer/>
+
+    <UserDataProvider>
+      <MainContainer/>
+    </UserDataProvider>
+
+
+    // <View >
+    //   <View style={styles.container}></View >
+    //   <Paring/> 
+    // </View>
+
+
+    // <View >
+    //   <View style={styles.container}></View >
+    //     {/* <Paring/>  */}
+    //     <TwitchAuthLogin/> 
+    //     {/* <MessageList /> */}
+    //     {/* <SendMessageScreen /> */}
+    //     {/* <MessageList  /> */}
+    //     {/* <MessageList userId="inulive" /> */}
+    //  </View>
+
 
 
 

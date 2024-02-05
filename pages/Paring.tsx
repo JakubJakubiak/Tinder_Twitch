@@ -31,7 +31,6 @@ export default class Paring extends Component {
       dogImages: [],
     };
 
-
     this.rotate = this.position.x.interpolate({
       inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
       outputRange: ['-10deg', '0deg', '10deg'],
@@ -111,17 +110,16 @@ export default class Paring extends Component {
   }
 
   fetchDogImages = () => {
-    const { userId } = this.props;
     fetch('https://end-point-small.vercel.app/firbaselist')
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const filteredDogImages = data.filter(user => user.userId !== userId);
-          const dogImages = filteredDogImages.map((user) => ({
-            image: user.image,
-            userId: user.userId,
-            displayName: user.displayName,
+          const dogImages = data.map((dog) => ({
+            image: dog.avatar, 
+            userId: dog.uid, 
+            displayName: dog.name
           }));
+      
           this.setState((prevState) => ({
             dogImages: [...prevState.dogImages, ...dogImages], 
           }));
@@ -146,16 +144,16 @@ export default class Paring extends Component {
 
   like = ()=> {
     console.log("like");
-    /// add id users 
-    // do bazy danych dodac ze usersid polusbil inne user id a ten drugi urztkon gdy polubi zdiec sprac czy jusz polubil ten drugi 
-    //wszstkie bedeom rpzhowynae wjdnym pukcie jjako pary
+
   }
   Nolike = ()=> {
     console.log("Nolike");
   }
 
   renderUsers = () => {
-    return this.state.dogImages.map((user, index) => {
+    return this.state.dogImages.map((dog, index) => {
+    
+    
       if (index < this.state.currentIndex) {
         return null;
       } else if (index === this.state.currentIndex) {
@@ -168,23 +166,17 @@ export default class Paring extends Component {
               { height: SCREEN_HEIGHT - 120, width: SCREEN_WIDTH, padding: 10, position: 'absolute' },
             ]}
           >
-            {/* <TouchableOpacity onPress={this.nextImage}>
-              <View style={{ backgroundColor: 'transparent', position: 'absolute', bottom: 20, left: 20, zIndex: 1000 }} />
-              <Text style={{ color: 'green', fontSize: 32, fontWeight: '800', padding: 10 }}>LIKE</Text>
-            </TouchableOpacity> */}
+
             <Animated.View style={{ opacity: this.likeOpacity, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 1, borderColor: 'green', color: 'green', fontSize: 32, fontWeight: '800', padding: 10 }}>
-                UwU
-              </Text>
+              <Text style={{ borderWidth: 1, borderColor: 'green', color: 'green', fontSize: 32, fontWeight: '800', padding: 10 }}>UwU</Text>
             </Animated.View>
             <Animated.View style={{ opacity: this.dislikeOpacity, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 1, borderColor: 'red', color: 'red', fontSize: 32, fontWeight: '800', padding: 10 }}>
-                ARA ARA
-              </Text>
+              <Text style={{ borderWidth: 1, borderColor: 'red', color: 'red', fontSize: 32, fontWeight: '800', padding: 10 }}>ARA ARA</Text>
             </Animated.View>
-            <Image style={styles.img} source={{ uri: user.image }} />
+            
+            <Image style={styles.img} source={{ uri: dog.image }} />
             <ScrollView>
-              <Text style={styles.tex}>{user.displayName}</Text>
+              <Text style={styles.tex2}>{dog.displayName}</Text>
             </ScrollView>
           </Animated.View>
         );
@@ -203,9 +195,9 @@ export default class Paring extends Component {
               },
             ]}
           >
-            <Image style={styles.img} source={{ uri: user.image }} />
+            <Image style={styles.img} source={{ uri: dog.image }} />
             <ScrollView>
-              <Text style={styles.tex}>{user.displayName}</Text>
+              <Text style={styles.tex2}>{user.displayName}</Text>
             </ScrollView>
           </Animated.View>
         );
@@ -214,7 +206,6 @@ export default class Paring extends Component {
   };
 
   render() {
-
     return (
       <View style={{ flex: 1 }}>
         <View style={{ height: 60 }}></View>
@@ -228,11 +219,12 @@ export default class Paring extends Component {
 const styles = StyleSheet.create({
   img: {
     flex: 1,
+    height: null,
+    width: null,
     resizeMode: 'cover',
     borderRadius: 20,
   },
   tex: {
-    flex: 1,
     marginTop: 20,
     padding: 10,
     height: null,
@@ -244,7 +236,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff69',
   },
   tex2: {
-    flex: 1,
-    backgroundColor: '#ffffff00',
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 10 
   },
+  
 });

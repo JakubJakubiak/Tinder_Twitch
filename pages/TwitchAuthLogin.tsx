@@ -6,10 +6,11 @@ import Paring from './Paring';
 import Explore from './Explore';
 import MessageList from './MessageList';
 import Chat from './chat';
+import MainContainer from './config/MainContainer';
+
+import SaveData from './SaveData';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-
 import {  db  } from './config/firebase';
 import { setDoc,doc} from 'firebase/firestore';
 
@@ -59,10 +60,6 @@ const TwitchAuthLogin = () => {
   };
 
   const handleLogout = () => {
-    // Perform logout action here
-    // For example, you can reset the webViewURL to initialURL
-    // CookieManager.clearAll();
-
     const clearDataScript = `
       document.cookie = '';
       window.localStorage.clear();
@@ -74,20 +71,24 @@ const TwitchAuthLogin = () => {
   };
 
 
-
-
   // const webViewURLObject = webViewURL !== "" && isJSON(webViewURL)
   //   ? JSON.parse(webViewURL)
   //   : webViewURLObject;
 
-    const webViewURLObject = isJSON(webViewURL) ? JSON.parse(webViewURL) : null;
+
+
+//////////////// Zresetować po zalogowaniu odświeżenie może nie zadziałać. ///////////////
+
+    const webViewURLObject = isJSON(webViewURL) ? JSON.parse(webViewURL): null;
+
+    // console.log(webViewURLObject.userData);
 
   return (
-    webViewURL && isJSON(webViewURL) && webViewURLObject.userData ? (   
+    webViewURL && isJSON(webViewURL) && webViewURLObject.userData ? ( 
       <View>
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: 'black', paddingHorizontal: 10, paddingVertical: 5 }}>
       <View>
-        <Text>{webViewURLObject.userData.userId}</Text>
+        {/* <Text>{webViewURLObject.userData.userId}</Text> */}
         <Text>{webViewURLObject.userData.displayName}</Text>
         <Text>{webViewURLObject.userData.bio}</Text>
       </View>
@@ -99,11 +100,18 @@ const TwitchAuthLogin = () => {
     </View>
 
 
+    {/* <SaveData children={webViewURLObject.userData}  /> */}
+
+
+    {/* <MainContainer/> */}
+    
+
     {/* <ButoaddLogin user={webViewURLObject.userData} /> */}
     {/* <Paring userId={webViewURLObject.userData.userId}  /> */}
     {/* <Explore /> */}
 
-    <MessageList route={webViewURLObject.userData}  />
+    {/* <MessageList route={webViewURLObject.userData}  /> */}
+    
 
     {/* <Chat user={webViewURLObject.userData}  /> */}
 

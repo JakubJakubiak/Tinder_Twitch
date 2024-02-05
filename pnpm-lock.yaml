@@ -53,12 +53,18 @@ dependencies:
   react-native-gifted-chat:
     specifier: ^2.4.0
     version: 2.4.0(react-native@0.73.2)(react@18.2.0)
+  react-native-safe-area-context:
+    specifier: ^4.9.0
+    version: 4.9.0(react-native@0.73.2)(react@18.2.0)
   react-native-screens:
     specifier: ^3.29.0
     version: 3.29.0(react-native@0.73.2)(react@18.2.0)
   react-native-swipe-list-view:
     specifier: ^3.2.9
     version: 3.2.9(prop-types@15.8.1)(react-native@0.73.2)(react@18.2.0)
+  react-native-vector-icons:
+    specifier: ^10.0.3
+    version: 10.0.3
   react-native-webview:
     specifier: ^13.6.4
     version: 13.7.0(react-native@0.73.2)(react@18.2.0)
@@ -7104,7 +7110,7 @@ packages:
       react: '*'
       react-native: '*'
     dependencies:
-      prop-types: 15.7.2
+      prop-types: 15.8.1
       react: 18.2.0
       react-native: 0.73.2(@babel/core@7.23.9)(@babel/preset-env@7.23.9)(react@18.2.0)
     dev: false
