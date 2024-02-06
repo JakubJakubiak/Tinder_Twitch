@@ -12,9 +12,10 @@ import { GiftedChat,InputToolbar,SystemMessage,Bubble } from 'react-native-gifte
 
 const Chat = ({ navigation, user }) => {
     console.log("///user//////");
-    console.log(user);
-    const c_uid = auth?.currentUser.uid;
-    const t_uid = user.userId;
+    console.log(navigation.userId);
+    // const c_uid = auth?.currentUser.uid;
+    const c_uid = "6969"
+    const t_uid = "417210681";
 
     const customtInputToolbar = props => {
       return (
@@ -78,7 +79,6 @@ const Chat = ({ navigation, user }) => {
 
     const getAllMessages = async () => {
         const chatid = t_uid > c_uid ? c_uid+ "-" +t_uid : t_uid+ "-" +c_uid
-  
 
         // var msgList = []
         const q = query(collection(db, 'Chats', chatid,'messages'),orderBy('createdAt', "desc"));
@@ -102,6 +102,10 @@ const Chat = ({ navigation, user }) => {
         }
         setMessages(previousMessages => GiftedChat.append(previousMessages, userMsg))
         const chatid = t_uid > c_uid ? c_uid+ "-" +t_uid : t_uid+ "-" +c_uid
+        
+
+
+        console.log("setMessagesi:", setMessages);
         
         //collection of React
         const docRef = collection(db, 'Chats', chatid,'messages');
@@ -147,40 +151,14 @@ const Chat = ({ navigation, user }) => {
               }}
             />
           );
-        }}      
+        }}    
+        textInputProps={{
+            style: {
+                color: '#000', 
+            },
+        }}  
         />
     );
 }
 
 export default Chat;
-
-
-
-
-
-
-  //add Chatgpt
-        // addDoc(collection(db, 'chats'), { _id, createdAt,  text, user });
-        // try {
-        //     const response = await fetch("http://localhost:80", {
-        //       method: "POST",
-        //       headers: {
-        //         "Content-Type": "application/json",
-        //       },
-        //       body: JSON.stringify({ prompt: text }),
-        //     });
-      
-        //     const data = await response.json();
-        //     if (response.status !== 200) {
-        //       throw data.error || new Error(`Request failed with status ${response.status}`);
-        //     }
-        //     addDoc(collection(db, 'chats'), { _id:uuidv4(), createdAt:new Date() , text:data.bot, 
-        //             user:{
-        //                 _id: 'chatgpt@gmail.com',
-        //                 name: "CHATGPT",
-        //                 avatar: "https://gravatar.com/avatar/94d45dbdba988afacf30d916e7aaad69?s=200&d=mp&r=x"
-        //             } });
-        //   } catch(error) {
-        //     console.error(error);
-        //     alert(error.message);
-        //   }

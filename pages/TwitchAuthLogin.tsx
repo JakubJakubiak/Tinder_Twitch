@@ -111,7 +111,7 @@ const TwitchAuthLogin = () => {
   
     </View>
 
-
+      <ButoaddLogin user={webViewURLObject.userData} />
   
     </View>
     ):

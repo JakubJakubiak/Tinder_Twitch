@@ -6,8 +6,6 @@ import { View, Text, Button } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-import HomeScreen from './screens/HomeScreen';
-import SettingsScreen from './screens/SettingsScreen';
 import MessageScreen from '../MessageList';
 import ButoaddLogin from '../ButoaddLogin';
 import Paring from '../Paring';
@@ -16,22 +14,18 @@ import Chat from '../chat';
 import TwitchAuthLogin from '../TwitchAuthLogin';
 
 
-
 const home = "Paring";
 const chat = "chat";
-
-
 
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function MainContainer() {
+function MainContainer({ user }) {
+
     return (
         <NavigationContainer>
-            {/* Komponent TwitchAuthLogin, który będzie renderowany poza nawigacją */}
-            <TwitchAuthLogin />
-            
+          <TwitchAuthLogin />
             <Tab.Navigator
               initialRouteName={home}
               screenOptions={({ route }) => ({
@@ -50,10 +44,11 @@ function MainContainer() {
                   tabBarActiveTintColor: 'tomato', 
                   tabBarInactiveTintColor: 'white', 
                   tabBarLabelStyle: { paddingBottom: 10, fontSize: 10, color: 'white' }, 
-                  tabBarStyle: { backgroundColor: '#333333', padding: 10, height: 70 } 
+                  tabBarStyle: { backgroundColor: '#333333', padding: 10, height: 70 },
+                  
               })}
               >
-              <Tab.Screen name={home} component={Paring} />
+              <Tab.Screen name={home} component={Paring}   />
               <Tab.Screen name={chat} component={ChatStackScreen}  /> 
           </Tab.Navigator>
         </NavigationContainer>
@@ -73,9 +68,8 @@ function ChatStackScreen({ navigation }) {
 
         function HomeNoScreen({ navigation }) {
           return (
-              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' ,backgroundColor: '#696969' }}>
                 <MessageScreen
-             
                 navigation={navigation} 
                 route={{
                     "accessToken": "denu7h8opnxyot",

@@ -144,6 +144,7 @@ export default class Paring extends Component {
 
   like = ()=> {
     console.log("like");
+    
 
   }
   Nolike = ()=> {
@@ -197,7 +198,7 @@ export default class Paring extends Component {
           >
             <Image style={styles.img} source={{ uri: dog.image }} />
             <ScrollView>
-              <Text style={styles.tex2}>{user.displayName}</Text>
+              <Text style={styles.tex2}>{dog.displayName}</Text>
             </ScrollView>
           </Animated.View>
         );
@@ -207,7 +208,7 @@ export default class Paring extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.container}>
         <View style={{ height: 60 }}></View>
         <View style={{ flex: 1 }}>{this.renderUsers()}</View>
         <View style={{ height: 60 }}></View>
@@ -217,6 +218,10 @@ export default class Paring extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#696969', 
+  },
   img: {
     flex: 1,
     height: null,
@@ -239,7 +244,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 10 
+    marginTop: 10 ,
   },
   
 });
