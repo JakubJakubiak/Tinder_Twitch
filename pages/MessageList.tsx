@@ -115,7 +115,7 @@ const MessageScreen = ({navigation,route})=>{
       renderItem={({ item }) => (
 
         <TouchableOpacity onPress={() => navigation.navigate('Chat', { name: item.displayName, uid: item.userId, avatar: item.image })}>
-          
+
           {console.log(item.uid)}
           <View style={styles.card}>
             {/* <Image style={styles.userImageST} source={{ uri: item.image }} /> */}
@@ -128,7 +128,6 @@ const MessageScreen = ({navigation,route})=>{
         </TouchableOpacity>
       )}
     />
-     
     )
 }
 
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: '#000'
+    backgroundColor: '#696969'
   },
   sectionTitle: {
     fontSize: 24,
