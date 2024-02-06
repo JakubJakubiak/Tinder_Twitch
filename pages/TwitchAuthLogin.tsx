@@ -25,10 +25,10 @@ import {
   getDocs
 } from 'firebase/firestore';
 import { database } from './config/firebase';
-
-const TwitchAuthLogin = () => {
+const TwitchAuthLogin = ({ updateUser }) => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
   const [webViewURL, setWebViewURL] = useState(initialURL);
+  const [userDataUpdated, setUserDataUpdated] = useState(false); // Dodaj stan dla sprawdzania, czy dane użytkownika zostały już zaktualizowane
 
   const { userData, setUserData } = useUserData();
 
@@ -41,7 +41,6 @@ const TwitchAuthLogin = () => {
     }
   };
 
-  const Tab = createBottomTabNavigator();
   const onNavigationStateChange = async (navState: { url: React.SetStateAction<string>; loading: any; }) => {
     console.log(navState.url);
     setWebViewURL(navState.url);
@@ -74,48 +73,35 @@ const TwitchAuthLogin = () => {
     setWebViewURL(initialURL);
   };
 
-
-  // const webViewURLObject = webViewURL !== "" && isJSON(webViewURL)
-  //   ? JSON.parse(webViewURL)
-  //   : webViewURLObject;
-
-
-
-//////////////// Zresetować po zalogowaniu odświeżenie może nie zadziałać. ///////////////
-
-    const webViewURLObject = isJSON(webViewURL) ? JSON.parse(webViewURL): null;
+  const webViewURLObject = isJSON(webViewURL) ? JSON.parse(webViewURL): null;
   
-    const GitwebViewURLObject = webViewURLObject 
+  const userDataToUpdate = webViewURLObject 
     && webViewURLObject.userData 
-    // && typeof webViewURLObject.userData === 'object' 
     && Object.keys(webViewURLObject)
     ? webViewURLObject.userData : null;
 
-  
-    // console.log(webViewURLObject.length);
+  // Dodaj warunek, aby uniknąć zapętlenia aktualizacji danych użytkownika
+  if (userDataToUpdate && !userDataUpdated) {
+    updateUser(userDataToUpdate);
+    setUserDataUpdated(true);
+  }
 
   return (
-    // webViewURL && isJSON(webViewURL) && webViewURLObject.userData ? ( 
-      GitwebViewURLObject ? ( 
+    userDataToUpdate ? ( 
       <View>
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: 'black', paddingHorizontal: 10, paddingVertical: 5 }}>
-      <View>
-        {/* <Text>{webViewURLObject.userData.userId}</Text> */}
-        <Text>{webViewURLObject.userData.displayName}</Text>
-        <Text>{webViewURLObject.userData.bio}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: 'black', paddingHorizontal: 10, paddingVertical: 5 }}>
+          <View>
+            <Text>{userDataToUpdate.displayName}</Text>
+            <Text>{userDataToUpdate.bio}</Text>
+          </View>
+          <Image
+            source={{ uri: userDataToUpdate.image }}
+            style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 10 }}
+          />
+        </View>
+        <ButoaddLogin user={userDataToUpdate} />
       </View>
-      <Image
-        source={{ uri: webViewURLObject.userData.image }}
-        style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 10 }}
-      />
-  
-    </View>
-
-      <ButoaddLogin user={webViewURLObject.userData} />
-  
-    </View>
-    ):
-    (
+    ) : (
       <View style={{ width: "100%", height: "100%" }}>
         <WebView
           source={{ uri: webViewURL }}

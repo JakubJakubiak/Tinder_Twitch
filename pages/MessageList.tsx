@@ -27,6 +27,9 @@ const MessageScreen = ({navigation,route})=>{
 
     console.log(" ///////////////////navigation//////////")
     console.log(navigation)
+    
+    console.log(" ///////////////////route//////////")
+    console.log(route)
     // const [users, setUsers] = useState(null)
 
     // const getUsers = async ()=> {
@@ -78,6 +81,8 @@ const MessageScreen = ({navigation,route})=>{
   
       useEffect(() => {
         const getUserContacts = () => {
+          console.log(" ///////////////////route//////////")
+          console.log(route)
           const q = query(doc(db, "Users", route.userId));
           const unsubscribe = onSnapshot(q, async(snapshot) => {
             if (snapshot.exists()) {
@@ -110,7 +115,7 @@ const MessageScreen = ({navigation,route})=>{
       renderItem={({ item }) => (
 
         <TouchableOpacity onPress={() => navigation.navigate('Chat', { name: item.displayName, uid: item.userId, avatar: item.image })}>
-        {/* <TouchableOpacity onPress={() => navigation.navigate('Chat')}> */}
+          
           {console.log(item.uid)}
           <View style={styles.card}>
             {/* <Image style={styles.userImageST} source={{ uri: item.image }} /> */}
