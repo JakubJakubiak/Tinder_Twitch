@@ -13,11 +13,7 @@ import SaveData from './SaveData';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {  db  } from './config/firebase';
 import { setDoc,doc} from 'firebase/firestore';
-
-
 import { useUserData } from './UserDataContext';
-
-
 import {
   collection,
   query,
@@ -25,10 +21,12 @@ import {
   getDocs
 } from 'firebase/firestore';
 import { database } from './config/firebase';
+
+
 const TwitchAuthLogin = ({ updateUser }) => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
   const [webViewURL, setWebViewURL] = useState(initialURL);
-  const [userDataUpdated, setUserDataUpdated] = useState(false); // Dodaj stan dla sprawdzania, czy dane użytkownika zostały już zaktualizowane
+  const [userDataUpdated, setUserDataUpdated] = useState(false); 
 
   const { userData, setUserData } = useUserData();
 
@@ -89,7 +87,7 @@ const TwitchAuthLogin = ({ updateUser }) => {
   return (
     userDataToUpdate ? ( 
       <View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: 'black', paddingHorizontal: 10, paddingVertical: 5 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: '#000', paddingHorizontal: 10, paddingVertical: 5 }}>
           <View>
             <Text>{userDataToUpdate.displayName}</Text>
             <Text>{userDataToUpdate.bio}</Text>

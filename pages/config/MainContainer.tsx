@@ -49,11 +49,11 @@ function MainContainer() {
         tabBarStyle: { backgroundColor: '#333333', padding: 10, height: 70 },
       })}
     >
-      <Tab.Screen name={home} component={Paring} options={{
-          headerStyle: {
-          backgroundColor: '#CCCCCC', 
-          },
-        }} />
+
+      <Tab.Screen name={home} >
+          {(props) => <Paring {...props} userData={userData} />}
+      </Tab.Screen> 
+
       <Tab.Screen name={chat} options={{ headerShown: false }} >
         {(props) => <ChatStackScreen {...props} userData={userData} />}
       </Tab.Screen>

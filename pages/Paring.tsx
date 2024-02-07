@@ -19,12 +19,15 @@ import {
   onSnapshot, 
   setDoc, 
   doc, 
+  getDocs,
   updateDoc} from 'firebase/firestore';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-export default class Paring extends Component {
+export default class Paring  extends Component  {
+  
+  
   position = new Animated.ValueXY();
   rotate;
   rotateAndTranslate;
@@ -39,7 +42,13 @@ export default class Paring extends Component {
     this.state = {
       currentIndex: 0,
       dogImages: [],
+      likedImage: null,
+      userData: props.userData
     };
+
+    
+
+
 
     this.rotate = this.position.x.interpolate({
       inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
@@ -91,8 +100,8 @@ export default class Paring extends Component {
             toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
             useNativeDriver: false,
           }).start(() => {
-          this.nextImage();
           this.like();
+          this.nextImage();
         });
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
@@ -111,6 +120,7 @@ export default class Paring extends Component {
         }
       },
     });
+    this.like = this.like.bind(this);
   }
 
   componentDidMount() {
@@ -119,26 +129,36 @@ export default class Paring extends Component {
     }
   }
 
-  fetchDogImages = () => {
-    fetch('https://end-point-small.vercel.app/firbaselist')
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          const dogImages = data.map((dog) => ({
-            image: dog.avatar, 
-            userId: dog.uid, 
-            displayName: dog.name
-          }));
-      
-          this.setState((prevState) => ({
-            dogImages: [...prevState.dogImages, ...dogImages], 
-          }));
-        } else {
-          console.error('Failed to fetch dog images:', data.message);
-        }
-      })
-      .catch((error) => console.error('Error fetching dog images:', error));
+
+  fetchDogImages = async () => {
+    try {
+      const usersCollection = collection(db, 'Users');
+      const querySnapshot = await getDocs(usersCollection);
+      const dogImages = [];
+  
+      querySnapshot.forEach((doc) => {
+        // console.log(doc.id, ' => ', doc.data());
+  
+        const data = doc.data();
+        const image = data.avatar; 
+        
+        dogImages.push({
+          image: image,
+          userId: doc.id,
+          displayName: data.name, 
+        });
+      });
+  
+      this.setState((prevState) => ({
+        dogImages: [...prevState.dogImages, ...dogImages],
+      }));
+  
+    } catch (error) {
+      console.error('Error fetching documents: ', error);
+    }
   };
+  
+
 
   nextImage = () => {
     this.setState(
@@ -151,12 +171,32 @@ export default class Paring extends Component {
       }
     );
   };
+ 
+  like = async () => {
+    const currentDog = this.state.dogImages[this.state.currentIndex];
+    // console.log("Liked image:", currentDog);
+    this.setState({ likedImage: currentDog });
 
-  like = ()=> {
-    console.log("like");
-    
+    const userId=this.props.userData.userId
 
-  }
+    console.log("/////////userId///////////////////")
+    console.log(this.props.userData.userId); 
+  
+    const usersCollection = collection(db, 'Users');
+    const userDocRef = doc(usersCollection, userId); 
+
+    try {
+      const userData = {
+          req: [currentDog],
+          // realFriend: [currentDog],
+      };
+
+      await updateDoc(userDocRef, userData);
+
+    } catch (error) {
+      console.error("Error updating document:", error);
+    }}
+
   Nolike = ()=> {
     console.log("Nolike");
   }
