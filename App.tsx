@@ -5,22 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-import MainContainer from './pages/config/MainContainer';
-
-import Paring from './pages/Paring';
-import TwitchAuthLogin from './pages/TwitchAuthLogin';
-import SendMessageScreen from './pages/SendMessageScreen';
-
-import ExploreScreen from './pages/Explore';
-import Chat from './pages/chat';
-
-import Register from './pages/Register';
-
-import MessageList from './pages/MessageList';
-
-
 import { UserDataProvider } from './pages/UserDataContext';
+import MainContainer from './pages/config/MainContainer';
 
 
 import {
@@ -40,7 +26,6 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-
 
 
 

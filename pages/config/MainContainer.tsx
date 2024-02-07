@@ -49,8 +49,12 @@ function MainContainer() {
         tabBarStyle: { backgroundColor: '#333333', padding: 10, height: 70 },
       })}
     >
-      <Tab.Screen name={home} component={Paring} />
-      <Tab.Screen name={chat}>
+      <Tab.Screen name={home} component={Paring} options={{
+          headerStyle: {
+          backgroundColor: '#CCCCCC', 
+          },
+        }} />
+      <Tab.Screen name={chat} options={{ headerShown: false }} >
         {(props) => <ChatStackScreen {...props} userData={userData} />}
       </Tab.Screen>
     </Tab.Navigator>
@@ -60,11 +64,19 @@ function MainContainer() {
 
 function ChatStackScreen({ navigation, userData }) {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home">
-        {(props) => <HomeNoScreen {...props} userData={userData} />}
-      </Stack.Screen>
-      <Stack.Screen name="Chat" component={Chat} />
+    <Stack.Navigator  >
+      <Stack.Screen name="Home" options={{
+          headerStyle: {
+          backgroundColor: '#CCCCCC', 
+          },
+        }} >
+        {(props) => <HomeNoScreen {...props} userData={userData}  />}
+      </Stack.Screen  >
+      <Stack.Screen name="Chat" component={Chat}  options={{
+          headerStyle: {
+          backgroundColor: '#CCCCCC', 
+          },
+        }} />
     </Stack.Navigator>
   );
 }

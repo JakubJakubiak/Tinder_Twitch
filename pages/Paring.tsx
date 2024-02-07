@@ -10,6 +10,16 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { auth, db } from './config/firebase';
+import { 
+  collection,
+  addDoc,
+  query, 
+  orderBy, 
+  onSnapshot, 
+  setDoc, 
+  doc, 
+  updateDoc} from 'firebase/firestore';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;

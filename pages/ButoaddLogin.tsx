@@ -1,7 +1,17 @@
 import React, { useEffect } from 'react';
-import { View, Button } from 'react-native';
+import { View } from 'react-native';
 import { db } from './config/firebase';
-import { collection, setDoc, doc, updateDoc } from 'firebase/firestore';
+import { 
+    collection, 
+    setDoc, 
+    doc, 
+    updateDoc,
+    addDoc,
+    query, 
+    orderBy, 
+    onSnapshot,
+    getDoc, 
+} from 'firebase/firestore';
 
 const ButoaddLogin = ({ user }) => { 
   useEffect(() => {
@@ -16,34 +26,26 @@ const ButoaddLogin = ({ user }) => {
         const userData = {
             uid: user.userId,
             name: user.displayName,
-            req: ["22", "l44l"],
-            realFriend: ["przyjaciel1","przyjaciel2","przyjaciel3"],
+            req: [],
+            realFriend: [],
             avatar: user.image
         };
 
-
-        // await updateDoc(userDocRef, userData);
-        await setDoc(userDocRef, userData);
-        console.log('Document written successfully');
-    } catch (error) {
-        console.error('Error adding document: ', error);
-        if (error.code === 'not-found') {
-            try {
-                await setDoc(userDocRef, userData);
-                console.log('Document created successfully');
-            } catch (error) {
-                console.error('Error creating document: ', error);
-            }
+        const docSnapshot = await getDoc(userDocRef);
+        if (docSnapshot.exists()) {
+            // await updateDoc(userDocRef, userData);
+            console.log('Document updated successfully');
         } else {
-            console.error('Error updating document: ', error);
+            await setDoc(userDocRef, userData);
+            console.log('Document created successfully');
         }
+    } catch (error) {
+        console.error('Error adding/updating document: ', error);
     }
   };
 
   return (
-    <View>
-      {/* <Button title="Add data" onPress={addDataToFirestore} /> */}
-    </View>
+    <View/>
   );
 };
 
