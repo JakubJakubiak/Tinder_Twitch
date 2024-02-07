@@ -21,68 +21,18 @@ import {
 } from 'react-native';
 
 
+import Chat from "./chat"
+
 const MessageScreen = ({navigation,route})=>{
     const dimensions = Dimensions.get('window');
     const imageWidth = dimensions.width;
 
-    console.log(" ///////////////////navigation//////////")
-    console.log(navigation)
-    
-    console.log(" ///////////////////route//////////")
-    console.log(route)
-    // const [users, setUsers] = useState(null)
+    const [notiUsers, setNotiUsers] = useState([])
+    const [Users, setUsers] = useState([])
+    const [routeState, setRouteState] = useState(route); 
 
-    // const getUsers = async ()=> {
-    //     var userList = []
-    //     console.log(route.params.user_id)
-    //     const q = query(collection(db, 'users'), where('uid','!=',route.params.user_id));
-    //     console.log(q);
-    //     const querySnapshot = await getDocs(q);
-    //     querySnapshot.forEach((doc) => {
-    //         userList.push(doc.data())
-    //     console.log(doc.id, " => ", doc.data());
-    //     });
-    //     console.log(userList);
-    //     setUsers(userList)
-    // }
-
-    // useEffect(()=>{
-    //     getUsers()
-    //   },[])
-
-
-
-      const [notiUsers, setNotiUsers] = useState([])
-      const [Users, setUsers] = useState([])
-  
-      // const getNotiUser = async ()=> {
-      //     const q = query(doc(db, "users", route.params.user_id));
-      //     const unsubscribe = onSnapshot(q, (snapshot) => {
-      //       var userList1 = []
-      //       console.log(snapshot.data());
-      //       if (snapshot.data().realFriend.length > 0){
-      //         snapshot.data().realFriend.forEach(
-      //           (uid) =>
-      //           {
-      //             const docRef1 = doc(db, "users", uid);
-      //             const _unsubscribe = onSnapshot(docRef1, (snapshot) => {
-      //               userList1.push(snapshot.data())
-      //             console.log(snapshot.data());
-      //             }) })}
-      //       setNotiUsers(userList1)
-            
-      //     })
-  
-      //   }
-  
-      // useEffect(()=>{
-      //     getNotiUser();
-      //   },[navigation])
-  
       useEffect(() => {
         const getUserContacts = () => {
-          console.log(" ///////////////////route//////////")
-          console.log(route)
           const q = query(doc(db, "Users", route.userId));
           const unsubscribe = onSnapshot(q, async(snapshot) => {
             if (snapshot.exists()) {
@@ -105,27 +55,28 @@ const MessageScreen = ({navigation,route})=>{
             }
           });
         }
-      
         getUserContacts();
       }, [route.userId]);
+      
 
     return(
       <FlatList
       data={notiUsers}
       renderItem={({ item }) => (
-
-        <TouchableOpacity onPress={() => navigation.navigate('Chat', { name: item.displayName, uid: item.userId, avatar: item.image })}>
-
-          {console.log(item.uid)}
-          <View style={styles.card}>
-            {/* <Image style={styles.userImageST} source={{ uri: item.image }} /> */}
-            <Image style={styles.userImageST} source={{  }} />
-            <View style={styles.textArea}>
-              <Text style={styles.nameText}>{item.uid}</Text>
-              <Text style={styles.msgContent}>{item.userId}</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+            // <TouchableOpacity onPress={() => navigation.navigate('Chat', { user: item, uid: item.uid })}> 
+            <TouchableOpacity onPress={() => navigation.navigate('Chat', {name: item.name, uid: item.uid, avatar:item.avatar, routeState: routeState })} >
+            
+              {/* <Chat user={routeState} />  */}
+              <View style={styles.card}>
+                {/* <Image style={styles.userImageST} source={{ uri: item.image }} /> */}
+                <Image style={styles.userImageST} source={{uri: "https://robohash.org/default" }} />
+                <View style={styles.textArea}>
+                  <Text style={styles.nameText}>{item.uid}</Text>
+                  <Text style={styles.msgContent}>{item.userId}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+    
       )}
     />
     )
@@ -149,7 +100,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: '#696969'
+    backgroundColor: '#444'
   },
   sectionTitle: {
     fontSize: 24,
@@ -175,9 +126,9 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingLeft: 10,
     width: 300,
-    backgroundColor: 'transparent',
-    borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
+    // backgroundColor: 'transparent',
+    // borderBottomWidth: 1,
+    // borderBottomColor: '#cccccc',
   },
   userText: {
     flexDirection: 'row',

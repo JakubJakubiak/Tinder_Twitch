@@ -64,7 +64,6 @@ function ChatStackScreen({ navigation, userData }) {
       <Stack.Screen name="Home">
         {(props) => <HomeNoScreen {...props} userData={userData} />}
       </Stack.Screen>
-      <Stack.Screen name="Details" component={DetailsScreen} options={{ headerTitle: null }} />
       <Stack.Screen name="Chat" component={Chat} />
     </Stack.Navigator>
   );
@@ -78,16 +77,6 @@ function HomeNoScreen({ navigation, userData }) {
   );
 }
 
-function DetailsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
-      <Button
-        title="Go to Details... again"
-        // onPress={() => navigation.push('Details')}
-      />
-    </View>
-  );
-}
+
 
 export default MainContainer;

@@ -21,7 +21,7 @@ import MessageList from './pages/MessageList';
 
 
 import { UserDataProvider } from './pages/UserDataContext';
-// import analytics from '@react-native-firebase/analytics';
+
 
 import {
   SafeAreaView,
@@ -84,33 +84,9 @@ function App(): JSX.Element {
   
 
   return (
-    // <MainContainer/>
-
     <UserDataProvider>
-      
       <MainContainer/>
     </UserDataProvider>
-
-
-    // <View >
-    //   <View style={styles.container}></View >
-    //   <Paring/> 
-    // </View>
-
-
-    // <View >
-    //   <View style={styles.container}></View >
-    //     {/* <Paring/>  */}
-    //     <TwitchAuthLogin/> 
-    //     {/* <MessageList /> */}
-    //     {/* <SendMessageScreen /> */}
-    //     {/* <MessageList  /> */}
-    //     {/* <MessageList userId="inulive" /> */}
-    //  </View>
-
-
-
-
   );
 }
 
