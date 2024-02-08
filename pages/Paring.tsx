@@ -178,17 +178,14 @@ export default class Paring  extends Component  {
     this.setState({ likedImage: currentDog });
 
     const userId=this.props.userData.userId
-
-    console.log("/////////userId///////////////////")
-    console.log(this.props.userData.userId); 
   
     const usersCollection = collection(db, 'Users');
     const userDocRef = doc(usersCollection, userId); 
 
     try {
       const userData = {
+          realFriend:[currentDog],
           req: [currentDog],
-          // realFriend: [currentDog],
       };
 
       await updateDoc(userDocRef, userData);

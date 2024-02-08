@@ -7,8 +7,10 @@ import { collection, addDoc,  query, orderBy, onSnapshot } from 'firebase/firest
 import { GiftedChat,InputToolbar,SystemMessage,Bubble } from 'react-native-gifted-chat';
 
 const Chat = ({ navigation, route }) => {
-    const c_uid = route.params.routeState.displayName
-    const t_uid = route.params.uid
+
+
+    const c_uid = route.params.routeState.userId
+    const t_uid = route.params.userId
     
 
     const customtInputToolbar = props => {

@@ -31,6 +31,7 @@ const MessageScreen = ({navigation,route})=>{
     const [Users, setUsers] = useState([])
     const [routeState, setRouteState] = useState(route); 
 
+
       useEffect(() => {
         const getUserContacts = () => {
           const q = query(doc(db, "Users", route.userId));
@@ -38,13 +39,13 @@ const MessageScreen = ({navigation,route})=>{
             if (snapshot.exists()) {
               const contactsObject = snapshot.data().realFriend;
               if (contactsObject && contactsObject.length > 0) { 
-                const contactsSnap = await Promise.all(contactsObject.map((c) => getDoc(doc(db, "users", c))))
-                const contactDetails = contactsSnap.map((d) => ({
-                  uid: d.id, 
-                  ...d.data()
-                }))
-                console.log(contactDetails);
-                setNotiUsers(contactDetails);
+                const contactsDetails = contactsObject.map((friend) => ({
+                    uid: friend.uid, 
+                    displayName: friend.displayName,
+                    image: friend.image,
+                    userId: friend.userId
+                }));
+                setNotiUsers(contactsDetails);
               } else {
                 console.log("No realFriend data found.");
                 setNotiUsers([]);
@@ -55,6 +56,7 @@ const MessageScreen = ({navigation,route})=>{
             }
           });
         }
+        
         getUserContacts();
       }, [route.userId]);
       
@@ -63,19 +65,15 @@ const MessageScreen = ({navigation,route})=>{
       <FlatList
       data={notiUsers}
       renderItem={({ item }) => (
-            // <TouchableOpacity onPress={() => navigation.navigate('Chat', { user: item, uid: item.uid })}> 
-            <TouchableOpacity onPress={() => navigation.navigate('Chat', {name: item.name, uid: item.uid, avatar:item.avatar, routeState: routeState })} >
-            
-              {/* <Chat user={routeState} />  */}
-              <View style={styles.card}>
-                {/* <Image style={styles.userImageST} source={{ uri: item.image }} /> */}
-                <Image style={styles.userImageST} source={{uri: "https://robohash.org/default" }} />
-                <View style={styles.textArea}>
-                  <Text style={styles.nameText}>{item.uid}</Text>
-                  <Text style={styles.msgContent}>{item.userId}</Text>
-                </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Chat', { name: item.displayName, uid: item.uid, avatar: item.image,  userId: item.userId,  routeState: routeState })}>
+            <View style={styles.card}>
+              <Image style={styles.userImageST} source={{ uri: item.image }} />
+              <View style={styles.textArea}>
+                <Text style={styles.nameText}>{item.displayName}</Text>
+                <Text style={styles.msgContent}>{item.userId}</Text>
               </View>
-            </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
     
       )}
     />
