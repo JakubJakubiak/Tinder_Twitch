@@ -138,16 +138,18 @@ export default class Paring  extends Component  {
       const dogImages = [];
   
       querySnapshot.forEach((doc) => {
-        // console.log(doc.id, ' => ', doc.data());
   
         const data = doc.data();
         const image = data.avatar; 
-        
+        const userId = this.props.userData.userId;
+
+        if (userId !== doc.id) {
         dogImages.push({
           image: image,
           userId: doc.id,
           displayName: data.name, 
         });
+        }
       });
   
       this.setState((prevState) => ({
@@ -172,27 +174,6 @@ export default class Paring  extends Component  {
       }
     );
   };
- 
-  // like = async () => {
-  //   const currentDog = this.state.dogImages[this.state.currentIndex];
-  //   // console.log("Liked image:", currentDog);
-  //   this.setState({ likedImage: currentDog });
-
-  //   const userId=this.props.userData.userId
-  
-  //   const usersCollection = collection(db, 'Users');
-  //   const userDocRef = doc(usersCollection, userId); 
-
-  //   try {
-  //     const userData = {
-  //         realFriend:[currentDog],//////////dodaj do realFriend koeljeny obiekt currentDog bez napidywaniwa poprzednich 
-  //     };
-
-  //     await updateDoc(userDocRef, userData);
-
-  //   } catch (error) {
-  //     console.error("Error updating document:", error);
-  //   }}
 
 
   like = async () => {
