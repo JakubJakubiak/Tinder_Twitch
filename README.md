@@ -1,8 +1,12 @@
 
 
-<img src="https://github.com/JakubJakubiak/Tinder_Twitch/blob/main/images/photo_2024-02-08_14-14-51.jpg" alt="photo" style="max-width: 100px; height: 400px">
-<img src="https://github.com/JakubJakubiak/Tinder_Twitch/blob/main/images/photo_2024-02-08_14-24-22.jpg" alt="photo" style="max-width: 100px; height: 400px">
+<div style="display: inline-block;">
+    <img src="https://github.com/JakubJakubiak/Tinder_Twitch/blob/main/images/photo_2024-02-08_14-14-51.jpg" alt="photo" style="max-width: 100px; height: 400px;">
+</div>
 
+<div style="display: inline-block;">
+    <img src="https://github.com/JakubJakubiak/Tinder_Twitch/blob/main/images/photo_2024-02-08_14-24-22.jpg" alt="photo" style="max-width: 100px; height: 400px;">
+</div>
 
 
 
