@@ -27,7 +27,6 @@ const TwitchAuthLogin = ({ updateUser }) => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
   const [webViewURL, setWebViewURL] = useState(initialURL);
   const [userDataUpdated, setUserDataUpdated] = useState(false); 
-
   const { userData, setUserData } = useUserData();
 
   const isJSON = (str: React.SetStateAction<string>) => {
@@ -78,7 +77,6 @@ const TwitchAuthLogin = ({ updateUser }) => {
     && Object.keys(webViewURLObject)
     ? webViewURLObject.userData : null;
 
-  // Dodaj warunek, aby uniknąć zapętlenia aktualizacji danych użytkownika
   if (userDataToUpdate && !userDataUpdated) {
     updateUser(userDataToUpdate);
     setUserDataUpdated(true);

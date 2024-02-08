@@ -83,7 +83,7 @@ function ChatStackScreen({ navigation, userData }) {
 
 function HomeNoScreen({ navigation, userData }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#696969' }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0' }}>
       <MessageScreen navigation={navigation} route={userData} onPress={() => navigation.navigate('Chat', { route: userData })} />
     </View>
   );

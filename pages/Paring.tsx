@@ -269,7 +269,8 @@ export default class Paring  extends Component  {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#696969', 
+    backgroundColor: '#f0f0f0',
+
   },
   img: {
     flex: 1,
@@ -293,6 +294,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#333333',
     marginTop: 10 ,
   },
   
