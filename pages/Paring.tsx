@@ -19,6 +19,7 @@ import {
   onSnapshot, 
   setDoc, 
   doc, 
+  getDoc,
   getDocs,
   updateDoc} from 'firebase/firestore';
 
@@ -172,27 +173,47 @@ export default class Paring  extends Component  {
     );
   };
  
+  // like = async () => {
+  //   const currentDog = this.state.dogImages[this.state.currentIndex];
+  //   // console.log("Liked image:", currentDog);
+  //   this.setState({ likedImage: currentDog });
+
+  //   const userId=this.props.userData.userId
+  
+  //   const usersCollection = collection(db, 'Users');
+  //   const userDocRef = doc(usersCollection, userId); 
+
+  //   try {
+  //     const userData = {
+  //         realFriend:[currentDog],//////////dodaj do realFriend koeljeny obiekt currentDog bez napidywaniwa poprzednich 
+  //     };
+
+  //     await updateDoc(userDocRef, userData);
+
+  //   } catch (error) {
+  //     console.error("Error updating document:", error);
+  //   }}
+
+
   like = async () => {
     const currentDog = this.state.dogImages[this.state.currentIndex];
-    // console.log("Liked image:", currentDog);
     this.setState({ likedImage: currentDog });
 
-    const userId=this.props.userData.userId
-  
+    const userId = this.props.userData.userId;
     const usersCollection = collection(db, 'Users');
     const userDocRef = doc(usersCollection, userId); 
 
     try {
-      const userData = {
-          realFriend:[currentDog],
-          req: [currentDog],
-      };
+        const userDocSnapshot = await getDoc(userDocRef);
+        const userData = userDocSnapshot.data();
+        const realFriendArray = userData.realFriend || [];
+        const updatedRealFriendArray = [...realFriendArray, currentDog];
 
-      await updateDoc(userDocRef, userData);
-
+        await setDoc(userDocRef, { realFriend: updatedRealFriendArray }, { merge: true });
     } catch (error) {
-      console.error("Error updating document:", error);
-    }}
+        console.error("Error updating document:", error);
+    }
+}
 
   Nolike = ()=> {
     console.log("Nolike");
