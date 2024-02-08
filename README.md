@@ -1,3 +1,9 @@
+https://github.com/JakubJakubiak/Tinder_Twitch/blob/main/images/photo_2024-02-08_14-14-51.jpg
+https://github.com/JakubJakubiak/Tinder_Twitch/blob/main/images/photo_2024-02-08_14-24-22.jpg
+
+
+
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
