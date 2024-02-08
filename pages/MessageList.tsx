@@ -95,10 +95,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 'auto',
     marginHorizontal: 4,
+    // marginVertical: 6,
     marginVertical: 6,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: '#444'
+    backgroundColor: '#444',
+    borderRadius: 10,
   },
   sectionTitle: {
     fontSize: 24,
@@ -114,8 +116,9 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   userImageST: {
-    width: 50,
-    height: 50,
+    margin: (10, 10),
+    width: 80,
+    height: 80,
     borderRadius: 25,
   }, 
   textArea: {
@@ -123,10 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 5,
     paddingLeft: 10,
-    width: 300,
-    // backgroundColor: 'transparent',
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#cccccc',
+    width: 280,
   },
   userText: {
     flexDirection: 'row',

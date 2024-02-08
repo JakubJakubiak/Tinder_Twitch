@@ -11,6 +11,7 @@ const Chat = ({ navigation, route }) => {
 
     const c_uid = route.params.routeState.userId
     const t_uid = route.params.userId
+    const avatar_id = route.params.avatar
     
 
     const customtInputToolbar = props => {
@@ -18,9 +19,12 @@ const Chat = ({ navigation, route }) => {
         <InputToolbar
             {...props}
             containerStyle={{
-            backgroundColor: "white",
+            backgroundColor: "#E0E0E0",
             borderTopColor: "#E8E8E8",
             borderTopWidth: 1,
+        }}
+        textInputStyle={{
+            color: "#000", 
         }}
         />
         );
@@ -69,8 +73,7 @@ const Chat = ({ navigation, route }) => {
         onSend={text => onSendMsg(text)}
         user={{ 
             _id: c_uid,
-            avatar: "https://robohash.org/name"
-        //   avatar: auth?.currentUser?.photoURL
+            avatar: avatar_id
         }}
         renderInputToolbar={props => customtInputToolbar(props)}
         renderBubble={props => {
@@ -99,11 +102,6 @@ const Chat = ({ navigation, route }) => {
             />
         );
         }}    
-        textInputProps={{
-            style: {
-                color: '#000', 
-            },
-        }}  
         />
     );
 }
