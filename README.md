@@ -5,7 +5,7 @@
 ![photo](https://github.com/JakubJakubiak/Tinder_Twitch/blob/main/images/photo_2024-02-08_14-24-22.jpg)
 
 
-<img src="https://github.com/JakubJakubiak/Tinder_Twitch/blob/main/images/photo_2024-02-08_14-14-51.jpg" alt="photo" style="max-width: 100px;">
+<img src="https://github.com/JakubJakubiak/Tinder_Twitch/blob/main/images/photo_2024-02-08_14-14-51.jpg" alt="photo" style="width: 100px;">
 
 
 
