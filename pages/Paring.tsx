@@ -258,11 +258,11 @@ export default class Paring  extends Component  {
 
   render() {
     return (
-      (this.state.dogImages.length === 0) ?
+      (!this.state.dogImages.length) ?
       (
       <View tyle={styles.container}>
         <Button
-          onPress={this.componentDidMount}
+          onPress={this.fetchDogImages}
           title="Loding Users"
           color="#841584"
         />
