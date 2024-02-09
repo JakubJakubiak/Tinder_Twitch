@@ -22,6 +22,8 @@ import {
 } from 'firebase/firestore';
 import { database } from './config/firebase';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const TwitchAuthLogin = ({ updateUser }) => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
@@ -37,6 +39,29 @@ const TwitchAuthLogin = ({ updateUser }) => {
       return false;
     }
   };
+
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('TwitchAuthLoginSave', jsonValue);
+      console.log(AsyncStorage);
+    } catch (e) {
+    }
+  };
+
+  const getData = async (value) => {
+    try {
+      const value = await AsyncStorage.getItem('TwitchAuthLoginSave');
+      console.log(AsyncStorage);
+      if (value !== null) {
+        storeData(value)
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  getData(userData);
 
   const onNavigationStateChange = async (navState: { url: React.SetStateAction<string>; loading: any; }) => {
     console.log(navState.url);
@@ -84,6 +109,7 @@ const TwitchAuthLogin = ({ updateUser }) => {
 
   return (
     userDataToUpdate ? ( 
+      getData(userDataToUpdate),
       <View>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: '#000', paddingHorizontal: 10, paddingVertical: 5 }}>
           <View>

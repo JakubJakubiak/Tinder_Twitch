@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Button,
   Dimensions,
   Image,
   Animated,
@@ -257,11 +258,24 @@ export default class Paring  extends Component  {
 
   render() {
     return (
+      this.state.dogImages.length === 0 || this.state.dogImages === null ?
+      (
+      <View tyle={styles.container}>
+        <Button
+          onPress={this.componentDidMount}
+          title="Loding Users"
+          color="#841584"
+        />
+      </View >
+        )
+      :
+      (
       <View style={styles.container}>
         <View style={{ height: 60 }}></View>
         <View style={{ flex: 1 }}>{this.renderUsers()}</View>
         <View style={{ height: 60 }}></View>
       </View>
+    )
     );
   }
 }
