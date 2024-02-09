@@ -1,35 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, Image, Button } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image } from 'react-native';
 import { WebView } from 'react-native-webview';
 import ButoaddLogin from './ButoaddLogin';
-import Paring from './Paring';
-import Explore from './Explore';
-import MessageList from './MessageList';
-import Chat from './chat';
-import MainContainer from './config/MainContainer';
 
-import SaveData from './SaveData';
-
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {  db  } from './config/firebase';
-import { setDoc,doc} from 'firebase/firestore';
 import { useUserData } from './UserDataContext';
-import {
-  collection,
-  query,
-  where,
-  getDocs
-} from 'firebase/firestore';
-import { database } from './config/firebase';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 const TwitchAuthLogin = ({ updateUser }) => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
   const [webViewURL, setWebViewURL] = useState(initialURL);
-  const [userDataUpdated, setUserDataUpdated] = useState(false); 
   const { userData, setUserData } = useUserData();
+  const [htmlContent, setHtmlContent] = useState('');
+
+  const run = `
+    window.ReactNativeWebView.postMessage(document.documentElement.outerHTML);
+    true; 
+  `;
+
 
   const isJSON = (str: React.SetStateAction<string>) => {
     try {
@@ -40,49 +26,28 @@ const TwitchAuthLogin = ({ updateUser }) => {
     }
   };
 
-  const storeData = async (value) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('TwitchAuthLoginSave', jsonValue);
-      console.log(AsyncStorage);
-    } catch (e) {
-    }
-  };
+  useEffect(() => {
+    // htmlContent
+    console.log('htmlContent:', htmlContent);
+    const start =
+      htmlContent.indexOf(
+        '<pre style="word-wrap: break-word; white-space: pre-wrap;">',
+      ) + '<pre style="word-wrap: break-word; white-space: pre-wrap;">'.length;
+    // Find the ending position of the </pre> tag
+    const end = htmlContent.indexOf('</pre>', start);
+    // Extract the JSON string
+    const jsonString = htmlContent.substring(start, end);
 
-  const getData = async (value) => {
-    try {
-      const value = await AsyncStorage.getItem('TwitchAuthLoginSave');
-      console.log(AsyncStorage);
-      if (value !== null) {
-        storeData(value)
+    const isJson = isJSON(jsonString);
+    if (isJson) {
+      const jsonContent = JSON.parse(jsonString);
+      if (jsonContent?.userData) {
+        console.log('updateUser:', jsonContent);
+        updateUser(jsonContent.userData);
+        setUserData(jsonContent.userData);
       }
-    } catch (e) {
-      console.log(e);
     }
-  };
-
-  getData(userData);
-
-  const onNavigationStateChange = async (navState: { url: React.SetStateAction<string>; loading: any; }) => {
-    console.log(navState.url);
-    setWebViewURL(navState.url);
-
-    console.log('Redirected URL:', navState.url);
-    await fetchPageContent(navState.url);
-
-  };
-
-  const fetchPageContent = async (url: React.SetStateAction<string> | URL | Request) => {
-    try {
-      const response = await fetch(url);
-      const htmlContent = await response.text();
-
-      if (isJSON(htmlContent)) setWebViewURL(htmlContent);
-
-    } catch (error) { 
-      console.error('Error fetching page content:', error);
-    }
-  };
+  }, [htmlContent]);
 
   const handleLogout = () => {
     const clearDataScript = `
@@ -95,46 +60,41 @@ const TwitchAuthLogin = ({ updateUser }) => {
     setWebViewURL(initialURL);
   };
 
-  const webViewURLObject = isJSON(webViewURL) ? JSON.parse(webViewURL): null;
-  
-  const userDataToUpdate = webViewURLObject 
-    && webViewURLObject.userData 
-    && Object.keys(webViewURLObject)
-    ? webViewURLObject.userData : null;
-
-  if (userDataToUpdate && !userDataUpdated) {
-    updateUser(userDataToUpdate);
-    setUserDataUpdated(true);
-  }
-
-  return (
-    userDataToUpdate ? ( 
-      getData(userDataToUpdate),
-      <View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: '#000', paddingHorizontal: 10, paddingVertical: 5 }}>
-          <View>
-            <Text>{userDataToUpdate.displayName}</Text>
-            <Text>{userDataToUpdate.bio}</Text>
-          </View>
-          <Image
-            source={{ uri: userDataToUpdate.image }}
-            style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 10 }}
-          />
+  return userData ? (
+    <View>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          backgroundColor: '#000',
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+        }}>
+        <View>
+          <Text>{userData.displayName}</Text>
+          <Text>{userData.bio}</Text>
         </View>
-        <ButoaddLogin user={userDataToUpdate} />
-      </View>
-    ) : (
-      <View style={{ width: "100%", height: "100%" }}>
-        <WebView
-          source={{ uri: webViewURL }}
-          onNavigationStateChange={onNavigationStateChange}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          startInLoadingState={true}
-          onLoadEnd={() => fetchPageContent(webViewURL)}
+        <Image
+          source={{ uri: userData.image }}
+          style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 10 }}
         />
       </View>
-    ) 
+      <ButoaddLogin user={userData} />
+    </View>
+  ) : (
+    <View style={{ width: '100%', height: '100%' }}>
+      <WebView
+        source={{ uri: webViewURL }}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        startInLoadingState={true}
+        onMessage={event => {
+          setHtmlContent(event.nativeEvent.data);
+        }}
+        injectedJavaScript={run}
+      />
+    </View>
   );
 };
 
