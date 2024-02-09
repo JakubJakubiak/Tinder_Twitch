@@ -138,7 +138,6 @@ const styles = StyleSheet.create({
     padding: 10,
     height: null,
     width: null,
-    resizeMode: 'cover',
     borderRadius: 5,
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
