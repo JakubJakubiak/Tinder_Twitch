@@ -11,8 +11,8 @@ const Chat = ({ navigation, route }) => {
 
     const c_uid = route.params.routeState.userId
     const t_uid = route.params.userId
-    const avatar_id = route.params.avatar
-    
+    const avatar_id = route.params.routeState.image
+
 
     const customtInputToolbar = props => {
         return (
@@ -45,7 +45,7 @@ const Chat = ({ navigation, route }) => {
         const unsubscribe = onSnapshot(q, (snapshot) => setMessages(
             snapshot.docs.map(doc => ({...doc.data(),createdAt:doc.data().createdAt.toDate()}))
         )
-        );    
+        );   
     }
 
     
