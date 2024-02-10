@@ -10,6 +10,8 @@ import {
   PanResponder,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
+  ImageBackground,
 } from 'react-native';
 import { auth, db } from './config/firebase';
 import { 
@@ -227,7 +229,7 @@ export default class Paring  extends Component  {
             
             <Image style={styles.img} source={{ uri: dog.image }} />
             <ScrollView>
-              <Text style={styles.tex2}>{dog.displayName}</Text>
+              <Text style={styles.tex}>{dog.displayName}</Text>
             </ScrollView>
           </Animated.View>
         );
@@ -248,7 +250,7 @@ export default class Paring  extends Component  {
           >
             <Image style={styles.img} source={{ uri: dog.image }} />
             <ScrollView>
-              <Text style={styles.tex2}>{dog.displayName}</Text>
+              <Text style={styles.tex}>{dog.displayName}</Text>
             </ScrollView>
           </Animated.View>
         );
@@ -260,12 +262,9 @@ export default class Paring  extends Component  {
     return (
       (this.state.dogImages.length === 0) ?
       (
-      <View tyle={styles.container}>
-        <Button
-          onPress={this.fetchDogImages}
-          title="Loding Users"
-          color="#841584"
-        />
+        this.fetchDogImages(),
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color="#841584" />
       </View >
         )
       :
@@ -286,6 +285,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
 
   },
+  backgroundImage: {
+    flex: 1,
+    height: "80%",
+    width: "80%",
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   img: {
     flex: 1,
     height: null,
@@ -294,22 +307,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   tex: {
-    marginTop: 20,
-    padding: 10,
-    height: null,
-    width: null,
-    resizeMode: 'cover',
-    borderRadius: 5,
-    fontFamily: 'sans-serif',
-    fontWeight: 'bold',
-    backgroundColor: '#ffffff69',
-  },
-  tex2: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#333333',
     marginTop: 10 ,
+    // backgroundColor:"#aaaaaa99",
   },
   
 });

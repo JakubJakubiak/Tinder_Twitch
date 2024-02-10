@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image } from 'react-native';
 import { WebView } from 'react-native-webview';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ButoaddLogin from './ButoaddLogin';
-
 import { useUserData } from './UserDataContext';
 
 const TwitchAuthLogin = ({ updateUser }) => {
@@ -17,6 +17,34 @@ const TwitchAuthLogin = ({ updateUser }) => {
   `;
 
 
+
+  const saveTwitchAuthData = async () => {
+    try {
+      await AsyncStorage.setItem('@TwitchAuthLoginSave', userData);
+      console.log('Twitch authorization data has been saved.');
+      console.log(userData);
+    } catch (error) {
+      console.log('An error occurred while saving Twitch authorization data:', error);
+    }
+  };
+
+  const retrieveTwitchAuthData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@TwitchAuthLoginSave');
+      if (value !== null) {
+        console.log('Twitch authorization data read:', value);
+        setUserData(value);
+      } else {
+        console.log('No Twitch authorization data to read.');
+      }
+    } catch (error) {
+      console.log( error);
+    }
+  };
+
+  
+
+
   const isJSON = (str: React.SetStateAction<string>) => {
     try {
       JSON.parse(str);
@@ -26,9 +54,17 @@ const TwitchAuthLogin = ({ updateUser }) => {
     }
   };
 
+
+  // useEffect(() => {
+  //   retrieveTwitchAuthData()
+  // }, []);
+
+
+  
   useEffect(() => {
+    
     // htmlContent
-    console.log('htmlContent:', htmlContent);
+    // console.log('htmlContent:', htmlContent);
     const start =
       htmlContent.indexOf(
         '<pre style="word-wrap: break-word; white-space: pre-wrap;">',
@@ -42,26 +78,20 @@ const TwitchAuthLogin = ({ updateUser }) => {
     if (isJson) {
       const jsonContent = JSON.parse(jsonString);
       if (jsonContent?.userData) {
-        console.log('updateUser:', jsonContent);
+        // console.log('updateUser:', jsonContent);
         updateUser(jsonContent.userData);
         setUserData(jsonContent.userData);
+        // saveTwitchAuthData();
+        // retrieveTwitchAuthData()
       }
     }
   }, [htmlContent]);
 
-  const handleLogout = () => {
-    const clearDataScript = `
-      document.cookie = '';
-      window.localStorage.clear();
-      window.sessionStorage.clear();
-    `;
 
-    setInjectedJavaScript(clearDataScript);
-    setWebViewURL(initialURL);
-  };
 
   return userData ? (
     <View>
+        <ButoaddLogin user={userData} />
       <View
         style={{
           flexDirection: 'row',
@@ -80,7 +110,6 @@ const TwitchAuthLogin = ({ updateUser }) => {
           style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 10 }}
         />
       </View>
-      <ButoaddLogin user={userData} />
     </View>
   ) : (
     <View style={{ width: '100%', height: '100%' }}>
