@@ -1,84 +1,87 @@
-import { collection, addDoc, query, orderBy, onSnapshot,where,getDoc,doc,updateDoc,arrayUnion,arrayRemove} from 'firebase/firestore';
-import React, { useEffect, useState,useLayoutEffect,Fragment} from 'react';
-import { auth, db } from './config/firebase';
+import { query, onSnapshot, doc } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { db } from './config/firebase';
 // import { collection, query, where } from "firebase/firestore";
 import {
-  SafeAreaView,
-  StatusBar,
-
   StyleSheet,
   TouchableOpacity,
   Text,
   Image,
   FlatList,
-  ScrollView,
-  Button,
-  useColorScheme,
   View,
   Dimensions,
-
-  
 } from 'react-native';
 
+const MessageScreen = ({ navigation, route }) => {
+  const dimensions = Dimensions.get('window');
+  const imageWidth = dimensions.width;
 
-import Chat from "./chat"
+  const [notiUsers, setNotiUsers] = useState([]);
+  const [Users, setUsers] = useState([]);
+  const [routeState, setRouteState] = useState(route);
 
-const MessageScreen = ({navigation,route})=>{
-    const dimensions = Dimensions.get('window');
-    const imageWidth = dimensions.width;
+  useEffect(() => {
+    const getUserContacts = () => {
+      const q = query(doc(db, 'Users', route.userId));
+      const unsubscribe = onSnapshot(q, async snapshot => {
+        if (snapshot.exists()) {
+          const contactsObject = snapshot.data().realFriend;
+          if (contactsObject && contactsObject.length > 0) {
+            const contactsDetails = contactsObject.map(friend => ({
+              uid: friend.uid,
+              displayName: friend.displayName,
+              image: friend.image,
+              userId: friend.userId,
+            }));
+            // remove duplicates by id
+            const uniqueContacts = Array.from(
+              new Set(contactsDetails.map(a => a.userId)),
+            ).map(userId => {
+              return contactsDetails.find(a => a.userId === userId);
+            });
 
-    const [notiUsers, setNotiUsers] = useState([])
-    const [Users, setUsers] = useState([])
-    const [routeState, setRouteState] = useState(route); 
-
-
-      useEffect(() => {
-        const getUserContacts = () => {
-          const q = query(doc(db, "Users", route.userId));
-          const unsubscribe = onSnapshot(q, async(snapshot) => {
-            if (snapshot.exists()) {
-              const contactsObject = snapshot.data().realFriend;
-              if (contactsObject && contactsObject.length > 0) { 
-                const contactsDetails = contactsObject.map((friend) => ({
-                    uid: friend.uid, 
-                    displayName: friend.displayName,
-                    image: friend.image,
-                    userId: friend.userId
-                }));
-                setNotiUsers(contactsDetails);
-              } else {
-                console.log("No realFriend data found.");
-                setNotiUsers([]);
-              }
-            } else {
-              console.log("Snapshot does not exist.");
-              setNotiUsers([]);
-            }
-          });
+            setNotiUsers(uniqueContacts);
+          } else {
+            console.log('No realFriend data found.');
+            setNotiUsers([]);
+          }
+        } else {
+          console.log('Snapshot does not exist.');
+          setNotiUsers([]);
         }
-        
-        getUserContacts();
-      }, [route.userId]);
-      
+      });
+    };
 
-    return(
-      <FlatList
+    getUserContacts();
+  }, [route.userId]);
+
+  return (
+    <FlatList
       data={notiUsers}
       renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => navigation.navigate('Chat', { name: item.displayName, uid: item.uid, avatar: item.image,  userId: item.userId,  routeState: routeState })}>
-            <View style={styles.card}>
-              <Image style={styles.userImageST} source={{ uri: item.image }} />
-              <View style={styles.textArea}>
-                <Text style={styles.nameText}>{item.displayName}</Text>
-                <Text style={styles.msgContent}>{item.userId}</Text>
-              </View>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Chat', {
+              name: item.displayName,
+              uid: item.uid,
+              avatar: item.image,
+              userId: item.userId,
+              routeState: routeState,
+            })
+          }>
+          <View style={styles.card}>
+            <Image style={styles.userImageST} source={{ uri: item.image }} />
+            <View style={styles.textArea}>
+              <Text style={styles.nameText}>{item.displayName}</Text>
+              <Text style={styles.msgContent}>{item.userId}</Text>
             </View>
-          </TouchableOpacity>
-    
+          </View>
+        </TouchableOpacity>
       )}
     />
-    )
-}
+  );
+};
+
 
 const styles = StyleSheet.create({
     Contain: {
