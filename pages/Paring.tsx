@@ -258,7 +258,7 @@ export default class Paring  extends Component  {
 
   render() {
     return (
-      (!this.state.dogImages.length) ?
+      (this.state.dogImages.length === 0) ?
       (
       <View tyle={styles.container}>
         <Button
