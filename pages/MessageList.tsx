@@ -10,6 +10,7 @@ import {
   FlatList,
   View,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 
 const MessageScreen = ({ navigation, route }) => {
@@ -56,6 +57,11 @@ const MessageScreen = ({ navigation, route }) => {
   }, [route.userId]);
 
   return (
+    (notiUsers.length === 0) ?
+    (
+    <View style={styles.Contain}>
+      <ActivityIndicator size="large" color="#841584" />
+    </View >):
     <FlatList
       data={notiUsers}
       renderItem={({ item }) => (
