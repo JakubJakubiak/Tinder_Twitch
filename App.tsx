@@ -75,6 +75,8 @@ function App(): JSX.Element {
   );
 }
 
+
+
 const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,

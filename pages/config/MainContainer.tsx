@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, Button } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 
 import { createStackNavigator } from '@react-navigation/stack'
@@ -37,11 +38,11 @@ function MainContainer() {
           let iconName;
           let rn = route.name;
           if (rn === home) {
-            iconName = 'home';
+            iconName = 'heart';
           } else if (rn === chat) {
-            iconName = 'settings-outline';
+            iconName = 'message';
           }
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Entypo name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'white',
