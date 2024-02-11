@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useLayoutEffect ,useEffect, Fragment} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { auth, db } from './config/firebase';
 import { signOut } from 'firebase/auth';
@@ -7,6 +7,7 @@ import { collection, addDoc,  query, orderBy, onSnapshot } from 'firebase/firest
 import { GiftedChat,InputToolbar,SystemMessage,Bubble } from 'react-native-gifted-chat';
 
 const Chat = ({ navigation, route }) => {
+    const [messages, setMessages] = useState([]);
 
 
     const c_uid = route.params.routeState.userId
@@ -31,7 +32,7 @@ const Chat = ({ navigation, route }) => {
     };
 
 
-    const [messages, setMessages] = useState([]);
+  
 
 
     useEffect(() => {
@@ -66,6 +67,11 @@ const Chat = ({ navigation, route }) => {
 
     }
     return (
+        // (messages.length === 0) ?
+        // (
+        // <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        //     <ActivityIndicator size="large" color="#841584" />
+        // </View >):
         <GiftedChat 
         style={{flex: 1, backgroundColor:'#001973' }}
         showAvatarForEveryMessage={true}
