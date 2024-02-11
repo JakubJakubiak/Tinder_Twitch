@@ -17,23 +17,27 @@ const TwitchAuthLogin = ({ updateUser }) => {
   `;
 
 
-
   const saveTwitchAuthData = async () => {
     try {
-      await AsyncStorage.setItem('@TwitchAuthLoginSave', userData);
+      const userDataString = JSON.stringify(userData);
+      await AsyncStorage.setItem('@TwitchAuthLoginSave', userDataString);
       console.log('Twitch authorization data has been saved.');
-      console.log(userData);
+      console.log(userDataString);
+      console.log(AsyncStorage);
     } catch (error) {
       console.log('An error occurred while saving Twitch authorization data:', error);
     }
   };
+  
 
   const retrieveTwitchAuthData = async () => {
     try {
       const value = await AsyncStorage.getItem('@TwitchAuthLoginSave');
       if (value !== null) {
         console.log('Twitch authorization data read:', value);
-        setUserData(value);
+        const userDataObject = JSON.parse(value);
+        setUserData(userDataObject);
+        updateUser(userDataObject);
       } else {
         console.log('No Twitch authorization data to read.');
       }
@@ -44,7 +48,6 @@ const TwitchAuthLogin = ({ updateUser }) => {
 
   
 
-
   const isJSON = (str: React.SetStateAction<string>) => {
     try {
       JSON.parse(str);
@@ -54,17 +57,13 @@ const TwitchAuthLogin = ({ updateUser }) => {
     }
   };
 
-
-  // useEffect(() => {
-  //   retrieveTwitchAuthData()
-  // }, []);
-
-
-  
   useEffect(() => {
-    
-    // htmlContent
-    // console.log('htmlContent:', htmlContent);
+    retrieveTwitchAuthData()
+  }, []);
+
+  useEffect(() => {
+    // console.log('htmlContent:', hmlContent);
+  if(userData) return 
     const start =
       htmlContent.indexOf(
         '<pre style="word-wrap: break-word; white-space: pre-wrap;">',
@@ -77,16 +76,13 @@ const TwitchAuthLogin = ({ updateUser }) => {
     const isJson = isJSON(jsonString);
     if (isJson) {
       const jsonContent = JSON.parse(jsonString);
-      if (jsonContent?.userData) {
-        // console.log('updateUser:', jsonContent);
+      if (jsonContent?.userData)  {
         updateUser(jsonContent.userData);
         setUserData(jsonContent.userData);
-        // saveTwitchAuthData();
-        // retrieveTwitchAuthData()
+        saveTwitchAuthData();
       }
     }
   }, [htmlContent]);
-
 
 
   return userData ? (
