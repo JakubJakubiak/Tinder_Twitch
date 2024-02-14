@@ -32,13 +32,16 @@ import {
 } from 'react-native-gifted-chat';
 import {useUserData} from './UserDataContext';
 
+
+
 const Chat = ({navigation, route}) => {
     const [messages, setMessages] = useState([]);
     const user = useUserData();
 
     const c_uid = user.userData?.userId ?? '';
     const t_uid = route.params.userId;
-    const avatar_id = route.params.avatar;
+    const avatar_id = user.userData?.image ?? '';
+
 
 const customtInputToolbar = (props: InputToolbarProps<IMessage>) => {
     return (
