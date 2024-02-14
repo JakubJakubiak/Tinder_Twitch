@@ -1,7 +1,6 @@
-import { query, onSnapshot, doc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { db } from './config/firebase';
-// import { collection, query, where } from "firebase/firestore";
+import {doc, onSnapshot} from 'firebase/firestore';
+import React, {useEffect, useState} from 'react';
+import {db} from './config/firebase';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -13,22 +12,37 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-const MessageScreen = ({ navigation, route }) => {
-  const dimensions = Dimensions.get('window');
-  const imageWidth = dimensions.width;
+interface User {
+  uid: string;
+  displayName: string;
+  image: string;
+  userId: string;
+}
 
-  const [notiUsers, setNotiUsers] = useState([]);
-  const [Users, setUsers] = useState([]);
-  const [routeState, setRouteState] = useState(route);
+interface Props {
+  navigation: {
+    navigate: (screen: string, params: any) => void;
+  };
+  route: {
+    userId: string;
+  };
+  onPress: () => void;
+}
+
+const MessageScreen: React.FC<Props> = ({navigation, route}) => {
+  const dimensions = Dimensions.get('window');
+
+  const [notiUsers, setNotiUsers] = useState<User[]>([]);
+  const [routeState, setRouteState] = useState<any>(route);
 
   useEffect(() => {
     const getUserContacts = () => {
-      const q = query(doc(db, 'Users', route.userId));
-      const unsubscribe = onSnapshot(q, async snapshot => {
+      const q = doc(db, 'Users', route.userId);
+      onSnapshot(q, async snapshot => {
         if (snapshot.exists()) {
-          const contactsObject = snapshot.data().realFriend;
+          const contactsObject = snapshot.data()?.realFriend;
           if (contactsObject && contactsObject.length > 0) {
-            const contactsDetails = contactsObject.map(friend => ({
+            const contactsDetails = contactsObject.map((friend: any) => ({
               uid: friend.uid,
               displayName: friend.displayName,
               image: friend.image,
@@ -36,9 +50,11 @@ const MessageScreen = ({ navigation, route }) => {
             }));
             // remove duplicates by id
             const uniqueContacts = Array.from(
-              new Set(contactsDetails.map(a => a.userId)),
+              new Set(contactsDetails.map((a: {userId: any}) => a.userId)),
             ).map(userId => {
-              return contactsDetails.find(a => a.userId === userId);
+              return contactsDetails.find(
+                (a: {userId: unknown}) => a.userId === userId,
+              );
             });
 
             setNotiUsers(uniqueContacts);
@@ -56,15 +72,14 @@ const MessageScreen = ({ navigation, route }) => {
     getUserContacts();
   }, [route.userId]);
 
-  return (
-    (notiUsers.length === 0) ?
-    (
+  return notiUsers.length === 0 ? (
     <View style={styles.Contain}>
       <ActivityIndicator size="large" color="#841584" />
-    </View >):
+    </View>
+  ) : (
     <FlatList
       data={notiUsers}
-      renderItem={({ item }) => (
+      renderItem={({item}) => (
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('Chat', {
@@ -76,7 +91,7 @@ const MessageScreen = ({ navigation, route }) => {
             })
           }>
           <View style={styles.card}>
-            <Image style={styles.userImageST} source={{ uri: item.image }} />
+            <Image style={styles.userImageST} source={{uri: item.image}} />
             <View style={styles.textArea}>
               <Text style={styles.nameText}>{item.displayName}</Text>
               <Text style={styles.msgContent}>{item.userId}</Text>
@@ -88,14 +103,12 @@ const MessageScreen = ({ navigation, route }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
-    Contain: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        
-    },
+  Contain: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   Container: {
     marginTop: 32,
     paddingHorizontal: 24,
@@ -118,18 +131,17 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    
   },
   userImage: {
     paddingTop: 15,
     paddingBottom: 15,
   },
   userImageST: {
-    margin: (10, 10),
+    margin: 10,
     width: 80,
     height: 80,
     borderRadius: 25,
-  }, 
+  },
   textArea: {
     flexDirection: 'column',
     justifyContent: 'center',
@@ -150,8 +162,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
-    backgroundColor: '#ffffff69', 
-    
+    backgroundColor: '#6441a555',
   },
   msgTime: {
     textAlign: 'right',
@@ -169,7 +180,6 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
-
-})
+});
 
 export default MessageScreen;

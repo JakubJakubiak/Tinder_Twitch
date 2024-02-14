@@ -1,95 +1,126 @@
-import React, { useEffect, useState, useLayoutEffect, Fragment } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, Button } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React, {useState} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {View} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-
-import { createStackNavigator } from '@react-navigation/stack'
-
 import MessageScreen from '../MessageList';
-import ButoaddLogin from '../ButoaddLogin';
 import Paring from '../Paring';
 import Chat from '../chat';
 import TwitchAuthLogin from '../TwitchAuthLogin';
+import {UserData} from '../UserDataContext';
 
-const home = "Paring";
-const chat = "chat";
+const home: string = 'Pairing';
+const chat: string = 'Chat';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function MainContainer() {
-  const [userData, setUserData] = useState(null);
+interface MainContainerProps {}
 
-  const updateUser = (userData) => {
+function MainContainer(props: MainContainerProps) {
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  const updateUser = (userData: UserData | null) => {
     setUserData(userData);
   };
 
   return (
     <NavigationContainer>
-    <TwitchAuthLogin updateUser={updateUser} />
-    <Tab.Navigator
-      initialRouteName={home}
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          let rn = route.name;
-          if (rn === home) {
-            iconName = 'heart';
-          } else if (rn === chat) {
-            iconName = 'message';
+      <TwitchAuthLogin updateUser={updateUser} />
+      <Tab.Navigator
+        initialRouteName={home}
+        screenOptions={({route}) => ({
+          tabBarIcon: ({focused, color, size}) => {
+            let iconName: string = '';
+            if (route.name === home) {
+              iconName = 'heart';
+            } else if (route.name === chat) {
+              iconName = 'message';
+            }
+            return <Entypo name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: 'tomato',
+          tabBarInactiveTintColor: 'white',
+          tabBarLabelStyle: {paddingBottom: 10, fontSize: 10, color: 'white'},
+          tabBarStyle: {backgroundColor: '#6441a5', padding: 10, height: 70},
+        })}>
+        <Tab.Screen name={home}   options={{
+          headerStyle: {
+            backgroundColor: '#ccc',
+          },
+        }}>
+          {props => (userData ? <Paring {...props} {...userData}  /> : <View />)}
+        </Tab.Screen>
+
+        <Tab.Screen name={chat} options={{headerShown: false}}>
+          {props =>
+            userData ? (
+              <ChatStackScreen {...props} userData={userData} />
+            ) : (
+              <View />
+            )
           }
-          return <Entypo name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'white',
-        tabBarLabelStyle: { paddingBottom: 10, fontSize: 10, color: 'white' },
-        tabBarStyle: { backgroundColor: '#333333', padding: 10, height: 70 },
-      })}
-    >
-
-      <Tab.Screen name={home} >
-          {(props) => <Paring {...props} userData={userData} />}
-      </Tab.Screen> 
-
-      <Tab.Screen name={chat} options={{ headerShown: false }} >
-        {(props) => <ChatStackScreen {...props} userData={userData} />}
-      </Tab.Screen>
-    </Tab.Navigator>
-  </NavigationContainer>
+        </Tab.Screen>
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
-function ChatStackScreen({ navigation, userData }) {
+interface ChatStackScreenProps {
+  navigation: any;
+  userData: UserData;
+}
+
+function ChatStackScreen({navigation, userData}: ChatStackScreenProps) {
   return (
-    <Stack.Navigator  >
-      <Stack.Screen name="Home" options={{
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Home"
+        options={{
           headerStyle: {
-          backgroundColor: '#CCCCCC', 
+            backgroundColor: '#CCCCCC',
           },
-        }} >
-        {(props) => <HomeNoScreen {...props} userData={userData}  />}
-      </Stack.Screen  >
-      <Stack.Screen name="Chat" component={Chat}  options={{
+        }}>
+        {props => <HomeNoScreen {...props} userData={userData} />}
+      </Stack.Screen>
+      <Stack.Screen
+        name="Chat"
+        component={Chat}
+        options={{
           headerStyle: {
-          backgroundColor: '#CCCCCC', 
+            backgroundColor: '#CCCCCC',
           },
-        }} />
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
-function HomeNoScreen({ navigation, userData }) {
+interface HomeNoScreenProps {
+  navigation: any;
+  userData: UserData;
+}
+
+function HomeNoScreen({navigation, userData}: HomeNoScreenProps) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0' }}>
-      <MessageScreen navigation={navigation} route={userData} onPress={() => navigation.navigate('Chat', { route: userData })} />
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f0f0f0',
+      }}>
+      <MessageScreen
+        navigation={navigation}
+        route={{userId: userData.userId}}
+        onPress={() =>
+          navigation.navigate('Chat', {route: {...userData}})
+        }
+      />
     </View>
   );
 }
-
-
 
 export default MainContainer;

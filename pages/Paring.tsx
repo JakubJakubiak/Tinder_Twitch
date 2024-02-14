@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,47 +13,50 @@ import {
   ActivityIndicator,
   ImageBackground,
 } from 'react-native';
-import { auth, db } from './config/firebase';
-import { 
+import {db} from './config/firebase';
+import {
   collection,
   addDoc,
-  query, 
-  orderBy, 
-  onSnapshot, 
-  setDoc, 
-  doc, 
+  query,
+  orderBy,
+  onSnapshot,
+  setDoc,
+  doc,
   getDoc,
   getDocs,
-  updateDoc} from 'firebase/firestore';
+  updateDoc,
+} from 'firebase/firestore';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {UserData} from './UserDataContext';
 
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT: number = Dimensions.get('window').height;
+const SCREEN_WIDTH: number = Dimensions.get('window').width;
 
-export default class Paring  extends Component  {
-  
-  
-  position = new Animated.ValueXY();
-  rotate;
-  rotateAndTranslate;
-  likeOpacity;
-  dislikeOpacity;
-  nextCardOpacity;
-  nextCardScale;
-  PanResponder;
+interface State {
+  currentIndex: number;
+  images: UserData[];
+  likedImage: UserData | null;
+}
 
-  constructor(props: {} | Readonly<{}>) {
+export default class Paring extends Component<UserData, State> {
+  rotateAndTranslate: any;
+  position: Animated.ValueXY;
+  rotate: Animated.AnimatedInterpolation<number>;
+  likeOpacity: Animated.AnimatedInterpolation<number>;
+  dislikeOpacity: Animated.AnimatedInterpolation<number>;
+  nextCardOpacity: Animated.AnimatedInterpolation<number>;
+  nextCardScale: Animated.AnimatedInterpolation<number>;
+  PanResponder: any;
+
+  constructor(props: UserData) {
     super(props);
     this.state = {
       currentIndex: 0,
-      dogImages: [],
+      images: [],
       likedImage: null,
-      userData: props.userData
     };
 
-    
-
-
-
+    this.position = new Animated.ValueXY();
     this.rotate = this.position.x.interpolate({
       inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
       outputRange: ['-10deg', '0deg', '10deg'],
@@ -62,9 +65,7 @@ export default class Paring  extends Component  {
 
     this.rotateAndTranslate = {
       transform: [
-        {
-          rotate: this.rotate,
-        },
+        {rotate: this.rotate},
         ...this.position.getTranslateTransform(),
       ],
     };
@@ -89,230 +90,337 @@ export default class Paring  extends Component  {
 
     this.nextCardScale = this.position.x.interpolate({
       inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-      outputRange: [1, 0.8, 1],
+      outputRange: [1, 0.6, 1],
       extrapolate: 'clamp',
     });
 
     this.PanResponder = PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => true,
       onPanResponderMove: (evt, gestureState) => {
-        this.position.setValue({ x: gestureState.dx, y: gestureState.dy });
+        this.position.setValue({x: gestureState.dx, y: gestureState.dy});
       },
       onPanResponderRelease: (evt, gestureState) => {
         if (gestureState.dx > 50) {
           Animated.spring(this.position, {
-            toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
+            toValue: {x: SCREEN_WIDTH + 100, y: gestureState.dy},
             useNativeDriver: false,
           }).start(() => {
-          this.like();
-          this.nextImage();
-        });
+            this.like();
+            this.nextImage();
+          });
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
-            toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
+            toValue: {x: -SCREEN_WIDTH - 100, y: gestureState.dy},
             useNativeDriver: false,
           }).start(() => {
             this.nextImage();
-            this.Nolike();
+            this.dislike();
           });
         } else {
           Animated.spring(this.position, {
-            toValue: { x: 0, y: 0 },
+            toValue: {x: 0, y: 0},
             friction: 4,
             useNativeDriver: false,
           }).start();
         }
       },
     });
-    this.like = this.like.bind(this);
   }
 
   componentDidMount() {
-    if (this.state.dogImages.length === 0) {
-      this.fetchDogImages();
-    }
+    this.fetchImages();
   }
 
-
-  fetchDogImages = async () => {
+  fetchImages = async () => {
     try {
       const usersCollection = collection(db, 'Users');
       const querySnapshot = await getDocs(usersCollection);
-      const dogImages = [];
-  
-      querySnapshot.forEach((doc) => {
-  
+      const images: UserData[] = [];
+
+      querySnapshot.forEach(doc => {
         const data = doc.data();
-        const image = data.avatar; 
-        const userId = this.props.userData.userId;
+        const image: string = data.avatar;
+        const userId = this.props.userId;
 
         if (userId !== doc.id) {
-        dogImages.push({
-          image: image,
-          userId: doc.id,
-          displayName: data.name, 
-        });
+          images.push({
+            image: image,
+            userId: doc.id,
+            displayName: data.name,
+            bio: undefined,
+          });
         }
       });
-  
-      this.setState((prevState) => ({
-        dogImages: [...prevState.dogImages, ...dogImages],
+
+      this.setState(prevState => ({
+        images: [...prevState.images, ...images],
       }));
-  
     } catch (error) {
       console.error('Error fetching documents: ', error);
     }
   };
-  
-
 
   nextImage = () => {
     this.setState(
-      (prevState) => ({ currentIndex: prevState.currentIndex + 1 }),
+      prevState => ({currentIndex: prevState.currentIndex + 1}),
       () => {
-        if (this.state.currentIndex >= this.state.dogImages.length - 1) {
-          this.fetchDogImages();
+        if (this.state.currentIndex >= this.state.images.length - 1) {
+          this.fetchImages();
         }
-        this.position.setValue({ x: 0, y: 0 });
-      }
+        this.position.setValue({x: 0, y: 0});
+      },
     );
   };
 
-
   like = async () => {
-    const currentDog = this.state.dogImages[this.state.currentIndex];
-    this.setState({ likedImage: currentDog });
+    const current = this.state.images[this.state.currentIndex];
+    this.setState({likedImage: current});
 
-    const userId = this.props.userData.userId;
+    const userId = this.props.userId;
     const usersCollection = collection(db, 'Users');
-    const userDocRef = doc(usersCollection, userId); 
+    const userDocRef = doc(usersCollection, userId);
 
     try {
-        const userDocSnapshot = await getDoc(userDocRef);
-        const userData = userDocSnapshot.data();
-        const realFriendArray = userData.realFriend || [];
-        const updatedRealFriendArray = [...realFriendArray, currentDog];
-
-        await setDoc(userDocRef, { realFriend: updatedRealFriendArray }, { merge: true });
+      const userDocSnapshot = await getDoc(userDocRef);
+      const userData = userDocSnapshot.data();
+      const realFriendArray = userData?.realFriend || [];
+      const updatedRealFriendArray = [
+        ...realFriendArray,
+        {
+          image: current.image,
+          userId: current.userId,
+          displayName: current.displayName,
+        },
+      ];
+      await setDoc(
+        userDocRef,
+        {realFriend: updatedRealFriendArray},
+        {merge: true},
+      );
     } catch (error) {
-        console.error("Error updating document:", error);
+      console.error('Error updating document:', error);
     }
-}
-
-  Nolike = ()=> {
-    console.log("Nolike");
-  }
-
-  renderUsers = () => {
-    return this.state.dogImages.map((dog, index) => {
-    
-    
-      if (index < this.state.currentIndex) {
-        return null;
-      } else if (index === this.state.currentIndex) {
-        return (
-          <Animated.View
-            {...this.PanResponder.panHandlers}
-            key={index}
-            style={[
-              this.rotateAndTranslate,
-              { height: SCREEN_HEIGHT - 120, width: SCREEN_WIDTH, padding: 10, position: 'absolute' },
-            ]}
-          >
-
-            <Animated.View style={{ opacity: this.likeOpacity, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 1, borderColor: 'green', color: 'green', fontSize: 32, fontWeight: '800', padding: 10 }}>UwU</Text>
-            </Animated.View>
-            <Animated.View style={{ opacity: this.dislikeOpacity, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 1, borderColor: 'red', color: 'red', fontSize: 32, fontWeight: '800', padding: 10 }}>ARA ARA</Text>
-            </Animated.View>
-            
-            <Image style={styles.img} source={{ uri: dog.image }} />
-            <ScrollView>
-              <Text style={styles.tex}>{dog.displayName}</Text>
-            </ScrollView>
-          </Animated.View>
-        );
-      } else {
-        return (
-          <Animated.View
-            key={index}
-            style={[
-              {
-                opacity: this.nextCardOpacity,
-                transform: [{ scale: this.nextCardScale }],
-                height: SCREEN_HEIGHT - 120,
-                width: SCREEN_WIDTH,
-                padding: 10,
-                position: 'absolute',
-              },
-            ]}
-          >
-            <Image style={styles.img} source={{ uri: dog.image }} />
-            <ScrollView>
-              <Text style={styles.tex}>{dog.displayName}</Text>
-            </ScrollView>
-          </Animated.View>
-        );
-      }
-    }).reverse();
   };
 
+  dislike = () => {
+    console.log('Nolike');
+  };
+
+  renderUsers = () => {
+    return this.state.images
+      .map((user: UserData, index: number) => {
+        if (index < this.state.currentIndex) {
+          return null;
+        } else if (index === this.state.currentIndex) {
+          return (
+            <Animated.View
+              {...this.PanResponder.panHandlers}
+              key={index}
+              style={[
+                this.rotateAndTranslate,
+                {
+                  height: SCREEN_HEIGHT - 120,
+                  width: SCREEN_WIDTH,
+                  padding: 10,
+                  position: 'absolute',
+                },
+              ]}>
+              <Animated.View
+                style={{
+                  opacity: this.likeOpacity,
+                  transform: [{rotate: '-30deg'}],
+                  position: 'absolute',
+                  top: 50,
+                  left: 40,
+                  zIndex: 1000,
+                }}>
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    borderColor: 'green',
+                    color: 'green',
+                    fontSize: 32,
+                    fontWeight: '800',
+                    padding: 10,
+                  }}>
+                  UwU
+                </Text>
+              </Animated.View>
+              <Animated.View
+                style={{
+                  opacity: this.dislikeOpacity,
+                  transform: [{rotate: '30deg'}],
+                  position: 'absolute',
+                  top: 50,
+                  right: 40,
+                  zIndex: 1000,
+                }}>
+                <Text
+                  style={{
+                    borderWidth: 1,
+                    borderColor: 'red',
+                    color: 'red',
+                    fontSize: 32,
+                    fontWeight: '800',
+                    padding: 10,
+                  }}>
+                  ARA ARA
+                </Text>
+              </Animated.View>
+              <View style={styles.container}>
+                <Image style={styles.img} source={{uri: user.image}} />
+                <View style={styles.overlay}>
+                  <ScrollView>
+                    <Text style={styles.tex}>{user.displayName}</Text>
+                  </ScrollView>
+                </View>
+              </View>
+            </Animated.View>
+          );
+        } else {
+          return (
+            <Animated.View
+              key={index}
+              style={[
+                {
+                  opacity: this.nextCardOpacity,
+                  transform: [{scale: this.nextCardScale}],
+                  height: SCREEN_HEIGHT - 120,
+                  width: SCREEN_WIDTH,
+                  padding: 10,
+                  position: 'absolute',
+                },
+              ]}>
+              <View style={styles.container}>
+                <Image style={styles.img} source={{uri: user.image}} />
+                <View style={styles.overlay}>
+                  <ScrollView>
+                    <Text style={styles.tex}>{user.displayName}</Text>
+                  </ScrollView>
+                </View>
+              </View>
+            </Animated.View>
+          );
+        }
+      })
+      .reverse();
+  };
+
+
   render() {
-    return (
-      (this.state.dogImages.length === 0) ?
+    return this.state.images.length === 0 ? (
+      (this.fetchImages(),
       (
-        this.fetchDogImages(),
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#841584" />
-      </View >
-        )
-      :
-      (
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color="#841584" />
+        </View>
+      ))
+    ) : (
       <View style={styles.container}>
-        <View style={{ height: 60 }}></View>
-        <View style={{ flex: 1 }}>{this.renderUsers()}</View>
-        <View style={{ height: 60 }}></View>
+        <View style={{height: 60}}></View>
+        <View style={styles.containerback}></View>
+        <View style={{flex: 1}}>{this.renderUsers()}
+
+        {/* <View style={{flexDirection: 'row', justifyContent: 'space-between',   borderRadius: 80,}}> */}
+        {/* <View style={[styles.circleButton]}>
+            <Button
+              title=""
+              onPress={() => console.log('Kliknięto prawy przycisk')}
+            />
+          </View> */}
+
+          {/* <TouchableOpacity onPress={this.dislike} style={[styles.circleButton]}>
+            <Text>
+              <Entypo name={'heart'} size={50} color={"#f00"} />
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={this.dislike} style={[styles.circleButton]}>
+            <Text>
+              <Entypo name={'heart'} size={50} color={"#f00"} />
+            </Text>
+          </TouchableOpacity>
+        </View> */}
+        
+        </View>
+
+        <View style={{height: 60}}></View>
       </View>
-    )
     );
   }
 }
 
 const styles = StyleSheet.create({
+  button: {
+    backgroundColor: 'transparent',
+    borderRadius: 25,
+    padding: 10,
+    marginVertical: 10,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-
+    backgroundColor: '#f40f0f0',
   },
-  backgroundImage: {
+
+  containerback:{
     flex: 1,
-    height: "80%",
-    width: "80%",
-    resizeMode: 'cover',
-    justifyContent: 'center',
+    width:1000,
+    height:1000,
+    top: -(930 / 2),
+    position:'absolute',
+    backgroundColor: '#6441a555',
     alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomLeftRadius:500,
+    borderBottomRightRadius:500
+  },
+
+
+  img: {
+    width: "auto",
+    height: 400,
+    padding: 10,
+    resizeMode: 'cover',
     borderRadius: 20,
+  },
+
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+    top: '48%',
+    borderRadius: 20,
+    width: 300,
+  
   },
   loading: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  img: {
-    flex: 1,
-    height: null,
-    width: null,
-    resizeMode: 'cover',
-    borderRadius: 20,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  circleButton: {
+    width: 100,
+    height: 100,
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'lightblue',
   },
   tex: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#333333',
-    marginTop: 10 ,
-    // backgroundColor:"#aaaaaa99",
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderBottomLeftRadius: 20,
+    color: '#fff',
+    fontSize: 37,
+    width: "auto", 
+    padding: 10,
+    textAlign: 'center', 
+    // marginLeft: 'auto', 
+    marginRight: 'auto', 
   },
-  
 });

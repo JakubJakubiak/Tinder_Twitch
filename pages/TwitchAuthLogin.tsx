@@ -1,21 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image } from 'react-native';
-import { WebView } from 'react-native-webview';
+import React, {useEffect, useState} from 'react';
+import {View, Text, Image} from 'react-native';
+import {WebView} from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ButoaddLogin from './ButoaddLogin';
-import { useUserData } from './UserDataContext';
+import {UserData, useUserData} from './UserDataContext';
 
-const TwitchAuthLogin = ({ updateUser }) => {
+interface Props {
+  updateUser: (userData: UserData) => void;
+  // user: UserData;
+}
+
+const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
   const [webViewURL, setWebViewURL] = useState(initialURL);
-  const { userData, setUserData } = useUserData();
+  const {userData, setUserData} = useUserData();
   const [htmlContent, setHtmlContent] = useState('');
 
   const run = `
     window.ReactNativeWebView.postMessage(document.documentElement.outerHTML);
     true; 
   `;
-
 
   const saveTwitchAuthData = async () => {
     try {
@@ -25,10 +29,12 @@ const TwitchAuthLogin = ({ updateUser }) => {
       console.log(userDataString);
       console.log(AsyncStorage);
     } catch (error) {
-      console.log('An error occurred while saving Twitch authorization data:', error);
+      console.log(
+        'An error occurred while saving Twitch authorization data:',
+        error,
+      );
     }
   };
-  
 
   const retrieveTwitchAuthData = async () => {
     try {
@@ -42,13 +48,11 @@ const TwitchAuthLogin = ({ updateUser }) => {
         console.log('No Twitch authorization data to read.');
       }
     } catch (error) {
-      console.log( error);
+      console.log(error);
     }
   };
 
-  
-
-  const isJSON = (str: React.SetStateAction<string>) => {
+  const isJSON = (str: string) => {
     try {
       JSON.parse(str);
       return true;
@@ -58,12 +62,12 @@ const TwitchAuthLogin = ({ updateUser }) => {
   };
 
   useEffect(() => {
-    retrieveTwitchAuthData()
+    retrieveTwitchAuthData();
   }, []);
 
   useEffect(() => {
     // console.log('htmlContent:', hmlContent);
-  if(userData) return 
+    if (userData) return;
     const start =
       htmlContent.indexOf(
         '<pre style="word-wrap: break-word; white-space: pre-wrap;">',
@@ -76,7 +80,7 @@ const TwitchAuthLogin = ({ updateUser }) => {
     const isJson = isJSON(jsonString);
     if (isJson) {
       const jsonContent = JSON.parse(jsonString);
-      if (jsonContent?.userData)  {
+      if (jsonContent?.userData) {
         updateUser(jsonContent.userData);
         setUserData(jsonContent.userData);
         saveTwitchAuthData();
@@ -84,10 +88,9 @@ const TwitchAuthLogin = ({ updateUser }) => {
     }
   }, [htmlContent]);
 
-
   return userData ? (
     <View>
-        <ButoaddLogin user={userData} />
+      <ButoaddLogin user={userData} />
       <View
         style={{
           flexDirection: 'row',
@@ -102,15 +105,15 @@ const TwitchAuthLogin = ({ updateUser }) => {
           <Text>{userData.bio}</Text>
         </View>
         <Image
-          source={{ uri: userData.image }}
-          style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 10 }}
+          source={{uri: userData.image}}
+          style={{width: 50, height: 50, borderRadius: 25, marginLeft: 10}}
         />
       </View>
     </View>
   ) : (
-    <View style={{ width: '100%', height: '100%' }}>
+    <View style={{width: '100%', height: '100%'}}>
       <WebView
-        source={{ uri: webViewURL }}
+        source={{uri: webViewURL}}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         startInLoadingState={true}
