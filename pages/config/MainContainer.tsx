@@ -6,7 +6,7 @@ import {View} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 import MessageScreen from '../MessageList';
-import Paring from '../Paring';
+import Pairing from '../Pairing';
 import Chat from '../chat';
 import TwitchAuthLogin from '../TwitchAuthLogin';
 import {UserData} from '../UserDataContext';
@@ -46,12 +46,13 @@ function MainContainer(props: MainContainerProps) {
           tabBarLabelStyle: {paddingBottom: 10, fontSize: 10, color: 'white'},
           tabBarStyle: {backgroundColor: '#6441a5', padding: 10, height: 70},
         })}>
-        <Tab.Screen name={home}   options={{
+        <Tab.Screen name={home} options={{
           headerStyle: {
-            backgroundColor: '#ccc',
+            backgroundColor: '#6441a5',
           },
+          headerTintColor: '#fff',
         }}>
-          {props => (userData ? <Paring {...props} {...userData}  /> : <View />)}
+          {props => (userData ? <Pairing {...props} {...userData}  /> : <View />)}
         </Tab.Screen>
 
         <Tab.Screen name={chat} options={{headerShown: false}}>
@@ -80,8 +81,9 @@ function ChatStackScreen({navigation, userData}: ChatStackScreenProps) {
         name="Home"
         options={{
           headerStyle: {
-            backgroundColor: '#CCCCCC',
+            backgroundColor: '#6441a5',
           },
+          headerTintColor: '#fff',
         }}>
         {props => <HomeNoScreen {...props} userData={userData} />}
       </Stack.Screen>
@@ -90,8 +92,9 @@ function ChatStackScreen({navigation, userData}: ChatStackScreenProps) {
         component={Chat}
         options={{
           headerStyle: {
-            backgroundColor: '#CCCCCC',
+            backgroundColor: '#6441a5',
           },
+          headerTintColor: '#fff',
         }}
       />
     </Stack.Navigator>

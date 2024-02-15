@@ -38,7 +38,7 @@ interface State {
   likedImage: UserData | null;
 }
 
-export default class Paring extends Component<UserData, State> {
+export default class Pairing extends Component<UserData, State> {
   rotateAndTranslate: any;
   position: Animated.ValueXY;
   rotate: Animated.AnimatedInterpolation<number>;
