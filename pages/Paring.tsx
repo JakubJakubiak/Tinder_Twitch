@@ -319,31 +319,7 @@ export default class Paring extends Component<UserData, State> {
       <View style={styles.container}>
         <View style={{height: 60}}></View>
         <View style={styles.containerback}></View>
-        <View style={{flex: 1}}>{this.renderUsers()}
-
-        {/* <View style={{flexDirection: 'row', justifyContent: 'space-between',   borderRadius: 80,}}> */}
-        {/* <View style={[styles.circleButton]}>
-            <Button
-              title=""
-              onPress={() => console.log('Kliknięto prawy przycisk')}
-            />
-          </View> */}
-
-          {/* <TouchableOpacity onPress={this.dislike} style={[styles.circleButton]}>
-            <Text>
-              <Entypo name={'heart'} size={50} color={"#f00"} />
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={this.dislike} style={[styles.circleButton]}>
-            <Text>
-              <Entypo name={'heart'} size={50} color={"#f00"} />
-            </Text>
-          </TouchableOpacity>
-        </View> */}
-        
-        </View>
-
+        <View style={{flex: 1}}>{this.renderUsers()}</View>
         <View style={{height: 60}}></View>
       </View>
     );
