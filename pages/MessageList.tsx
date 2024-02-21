@@ -73,11 +73,12 @@ const MessageScreen: React.FC<Props> = ({navigation, route}) => {
   }, [route.userId]);
 
   return notiUsers.length === 0 ? (
-    <View style={styles.Contain}>
+    <View>
       <ActivityIndicator size="large" color="#841584" />
     </View>
   ) : (
     <FlatList
+      style={styles.Container}
       data={notiUsers}
       renderItem={({item}) => (
         <TouchableOpacity
@@ -91,7 +92,7 @@ const MessageScreen: React.FC<Props> = ({navigation, route}) => {
             })
           }>
           <View style={styles.card}>
-            <Image style={styles.userImageST} source={{uri: item.image}} />
+            <Image style={styles.userImage} source={{uri: item.image}} />
             <View style={styles.textArea}>
               <Text style={styles.nameText}>{item.displayName}</Text>
               <Text style={styles.msgContent}>{item.userId}</Text>
@@ -108,21 +109,23 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#444',
   },
   Container: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+    // marginTop: 32,
+    // paddingHorizontal: 24,
+    width: '100%',
+    height: 'auto',
+    backgroundColor: '#6441a5aa',
   },
   card: {
     width: '100%',
     height: 'auto',
     marginHorizontal: 4,
-    // marginVertical: 6,
-    marginVertical: 6,
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    backgroundColor: '#444',
-    borderRadius: 10,
+    borderBottomColor: "#000",
+    paddingBottom: 2,
+    borderBottomWidth: 1,
   },
   sectionTitle: {
     fontSize: 24,
@@ -133,19 +136,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   userImage: {
-    paddingTop: 15,
-    paddingBottom: 15,
-  },
-  userImageST: {
+    // paddingTop: 15,
+    // paddingBottom: 15,
     margin: 10,
     width: 80,
     height: 80,
     borderRadius: 25,
   },
+
   textArea: {
     flexDirection: 'column',
     justifyContent: 'center',
-    padding: 5,
+    paddingBottom: 5,
     paddingLeft: 10,
     width: 280,
   },
@@ -156,13 +158,12 @@ const styles = StyleSheet.create({
   nameText: {
     flex: 1,
     marginTop: 20,
-    padding: 10,
+    // padding: 10,
     height: null,
     width: null,
-    borderRadius: 5,
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
-    backgroundColor: '#6441a555',
+    // backgroundColor: '#f40f0f0',
   },
   msgTime: {
     textAlign: 'right',
@@ -171,6 +172,7 @@ const styles = StyleSheet.create({
   },
   msgContent: {
     paddingTop: 5,
+    paddingBottom: 15,
   },
   sectionDescription: {
     marginTop: 8,

@@ -7,7 +7,7 @@ import {UserData, useUserData} from './UserDataContext';
 
 interface Props {
   updateUser: (userData: UserData) => void;
-  // user: UserData;
+  
 }
 
 const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
@@ -21,13 +21,10 @@ const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
     true; 
   `;
 
-  const saveTwitchAuthData = async () => {
+  const saveTwitchAuthData = async (date:Record<string, any> ) => {
     try {
-      const userDataString = JSON.stringify(userData);
+      const userDataString = JSON.stringify(date);
       await AsyncStorage.setItem('@TwitchAuthLoginSave', userDataString);
-      console.log('Twitch authorization data has been saved.');
-      console.log(userDataString);
-      console.log(AsyncStorage);
     } catch (error) {
       console.log(
         'An error occurred while saving Twitch authorization data:',
@@ -42,7 +39,7 @@ const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
       if (value !== null) {
         console.log('Twitch authorization data read:', value);
         const userDataObject = JSON.parse(value);
-        setUserData(userDataObject);
+        setUserData(userDataObject); 
         updateUser(userDataObject);
       } else {
         console.log('No Twitch authorization data to read.');
@@ -72,9 +69,7 @@ const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
       htmlContent.indexOf(
         '<pre style="word-wrap: break-word; white-space: pre-wrap;">',
       ) + '<pre style="word-wrap: break-word; white-space: pre-wrap;">'.length;
-    // Find the ending position of the </pre> tag
     const end = htmlContent.indexOf('</pre>', start);
-    // Extract the JSON string
     const jsonString = htmlContent.substring(start, end);
 
     const isJson = isJSON(jsonString);
@@ -83,12 +78,15 @@ const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
       if (jsonContent?.userData) {
         updateUser(jsonContent.userData);
         setUserData(jsonContent.userData);
-        saveTwitchAuthData();
+        saveTwitchAuthData(jsonContent.userData);
       }
     }
+
   }, [htmlContent]);
 
+
   return userData ? (
+    
     <View>
       <ButoaddLogin user={userData} />
       <View
@@ -111,6 +109,7 @@ const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
       </View>
     </View>
   ) : (
+
     <View style={{width: '100%', height: '100%'}}>
       <WebView
         source={{uri: webViewURL}}

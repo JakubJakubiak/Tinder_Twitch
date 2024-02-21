@@ -36,7 +36,7 @@ function MainContainer(props: MainContainerProps) {
             let iconName: string = '';
             if (route.name === home) {
               iconName = 'heart';
-            } else if (route.name === chat) {
+            } else if (route.name === "chat") {
               iconName = 'message';
             }
             return <Entypo name={iconName} size={size} color={color} />;
@@ -55,7 +55,7 @@ function MainContainer(props: MainContainerProps) {
           {props => (userData ? <Pairing {...props} {...userData}  /> : <View />)}
         </Tab.Screen>
 
-        <Tab.Screen name={chat} options={{headerShown: false}}>
+        <Tab.Screen name="chat" options={{headerShown: false}}>
           {props =>
             userData ? (
               <ChatStackScreen {...props} userData={userData} />

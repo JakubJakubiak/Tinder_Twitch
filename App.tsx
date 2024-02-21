@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { UserDataProvider } from './pages/UserDataContext';
 import MainContainer from './pages/config/MainContainer';
+import 'firebase/analytics';
 
 
 import {
@@ -94,18 +95,7 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
-  container: {
 
-    width:1000,
-    height:1000,
-    top: -(930 / 2),
-    position:'absolute',
-    backgroundColor: '#f8552255',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomLeftRadius:500,
-    borderBottomRightRadius:500
-  },
 });
 
 export default App;
