@@ -19,7 +19,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@react-navigation/stack": "^6.3.20",
-    "express": "^4.18.2",
+    "express": "^4.19.2",
     "express-session": "^1.17.3",
     "firebase": "10.7.1",
     "handlebars": "^4.7.8",
