@@ -373,20 +373,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    marginTop: 10,
-  },
-  circleButton: {
-    width: 100,
-    height: 100,
-    borderRadius: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'lightblue',
-  },
+  
   tex: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',

@@ -40,7 +40,8 @@ const Chat = ({ navigation, route }) => {
 
     const c_uid = user.userData?.userId ?? '';
     const t_uid = route.params.userId;
-    const avatar_id = user.userData?.image ?? '';
+    // const avatar_id = user.userData?.image ?? '';
+    const avatar_id = route.params.avatar ?? '';
 
     const customtInputToolbar = (props: InputToolbarProps<IMessage>) => {
         return (

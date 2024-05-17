@@ -14,7 +14,7 @@ import {UserData} from '../UserDataContext';
 const home: string = 'Pairing';
 const chat: string = 'Chat';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<AddictionStackParamList>();
 const Stack = createNativeStackNavigator();
 
 interface MainContainerProps {}
@@ -25,6 +25,7 @@ function MainContainer(props: MainContainerProps) {
   const updateUser = (userData: UserData | null) => {
     setUserData(userData);
   };
+
 
   return (
     <NavigationContainer>
@@ -64,6 +65,8 @@ function MainContainer(props: MainContainerProps) {
             )
           }
         </Tab.Screen>
+    
+  
       </Tab.Navigator>
     </NavigationContainer>
   );
