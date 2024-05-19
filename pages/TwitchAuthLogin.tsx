@@ -23,15 +23,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
-import * as WebBrowser from 'expo-web-browser';
-
-// import { useAuth } from "../contexts/AuthContext";
-
 
 interface Props {
   updateUser: (userData: UserData) => void;
 }
-// https://end-point-small.vercel.app/auth/twitch/callback
+
 
 const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
@@ -41,50 +37,17 @@ const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
   const [isTwitchClicked, setIsTwitchClicked] = useState(false);
   
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState(null);
-  const inputRef = React.useRef();
-  const passwordRef = React.useRef();
-  const [isLoading, setIsLoading] = useState(false);
+  // const [email, setEmail] = React.useState("");
+  // const [password, setPassword] = React.useState("");
+  // const [error, setError] = React.useState(null);
+  // const inputRef = React.useRef();
+  // const passwordRef = React.useRef();
+  // const [isLoading, setIsLoading] = useState(false);
 
   const Tab = createBottomTabNavigator();
   const Stack = createNativeStackNavigator(); 
 
 
-
-
-  // const handleSignIn = async () => {
-  //   setIsLoading(true);
-
-  //   signInWithEmailAndPassword(authentication, email, password)
-  //     .then((res) => {
-  //       console.log("successful");
-  //       setLoggedInUser(res.user);
-  //     })
-
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setError("Incorrect Email/Password");
-  //     })
-
-  //     .finally(() => setIsLoading(false));
-  // };
-
-  // const handleSignUp = () => {
-  //   setIsLoading(true);
-  //   createUserWithEmailAndPassword(authentication, email, password)
-  //     .then((res) => {
-  //       console.log(res.user);
-  //       setLoggedInUser(res.user);
-  //     })
-  //     .catch((re) => {
-  //       console.log(re);
-  //     })
-  //     .finally(() => setIsLoading(false));
-  // };
-
-/////////
 
 
 
@@ -125,7 +88,8 @@ async function authorizeWithTwitch() {
 };
 
     saveTwitchAuthData(datefake.userData);
-
+    setUserData(datefake.userData);
+    
 
     // Use authResult.accessToken to make API requests
   } catch (error) {
@@ -171,6 +135,7 @@ async function authorizeWithTwitch() {
   const removeTwitchAuthData = async () => {
     try {
       await AsyncStorage.removeItem('@TwitchAuthLoginSave');
+      setUserData(null);
       console.log('Twitch authorization data removed successfully.');
     } catch (error) {
       console.log('An error occurred while removing Twitch authorization data:', error);
@@ -194,30 +159,7 @@ async function authorizeWithTwitch() {
 
 
 
-  useEffect(() => {
-    if (userData) return;
-    const start =
-      htmlContent.indexOf(
-        '<pre style="word-wrap: break-word; white-space: pre-wrap;">',
-      ) + '<pre style="word-wrap: break-word; white-space: pre-wrap;">'.length;
-    const end = htmlContent.indexOf('</pre>', start);
-    const jsonString = htmlContent.substring(start, end);
 
-    const isJson = isJSON(jsonString);
-    if (isJson) {
-      const jsonContent = JSON.parse(jsonString);
-      if (jsonContent?.userData) {
-        updateUser(jsonContent.userData);
-        setUserData(jsonContent.userData);
-        saveTwitchAuthData(jsonContent.userData);
-      }
-    }
-  }, [htmlContent]);
-
-  const handleClick = () => {
-    setIsTwitchClicked(true);
-    console.log('handleClick');
-  };
 
   
   const LoginGoust = () => {
@@ -231,47 +173,13 @@ async function authorizeWithTwitch() {
   };
     console.log('LoginGoust');
     saveTwitchAuthData(datefake.userData);
+    setUserData(datefake.userData);
 };
 
 
 
 
 
-
-
-const cleverAuthUrl = 'https://end-point-small.vercel.app/auth/twitch/callback';
-
-
-
-
-// const [loggedIn, setLoggedIn] = useState(false);
-
-// const onLoginSuccess = (data:any) => {
-
-//   setLoggedIn(true);
-//   Alert.alert('Success', 'Login successful!');
-// };
-
-// const onLoginFailure = (error) => {
-//   console.log('Login failed with error: ', error);
-//   Alert.alert('Error', 'Login failed. Please try again.');
-// };
-
-const getCleverUrl = () => {
-  return 'https://end-point-small.vercel.app/auth/twitch';
-}
-
-// const onCleverLoginPress = () => {
-//   Linking.openURL(getCleverUrl());
-
-// }
-
-
-// const onCleverLoginPress = () => {
-//   return (
-//     <WebView source={{ uri: 'https://end-point-small.vercel.app/auth/twitch/callback' }} />
-//   );
-// }
 
 
 
@@ -381,44 +289,6 @@ Linking.addEventListener('url', handleDeepLink);
             </Text>
           </TouchableOpacity>
 
-
-          {/* <TextInput
-        ref={inputRef}
-        style={styles.input}
-        placeholder="Enter your email"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        placeholderTextColor="#003f5c"
-        value={email}
-        onChangeText={(email) => setEmail(email)}
-      />
-
-      <TextInput
-        ref={passwordRef}
-        style={styles.input}
-        placeholder="Enter your password"
-        placeholderTextColor="#003f5c"
-        value={password}
-        secureTextEntry
-        onChangeText={(text) => setPassword(text)}
-      /> */}
-{/* 
-        <TouchableOpacity onPress={onCleverLoginPress} style={styles.button}>
-                <Text style={styles.loginText}>Login</Text>
-
-                {isLoading && (
-                  <ActivityIndicator
-                    size="small"
-                    color="white"
-                    style={{
-                      alignSelf: "center",
-                      justifyContent: "center",
-                      paddingLeft: 10,
-                    }}
-                  />
-                )}
-              </TouchableOpacity> */}
-
         </View>
 
       ) : (
@@ -500,5 +370,4 @@ const styles = StyleSheet.create({
 });
 
 export default TwitchAuthLogin;
-
 
