@@ -110,17 +110,28 @@ async function authorizeWithTwitch() {
     );
 
     const tokenDetails = await codeResponse.json();
-
     console.log(tokenDetails);
+
+
+  const datefake = {
+    userData: {
+        userId: tokenDetails.id,
+        displayName: tokenDetails.display_name,
+        bio: "",
+        broadcaster_type: tokenDetails.broadcaster_type,
+        created_at: tokenDetails.created_at,
+        image: tokenDetails.profile_image_url
+    }
+};
+
+    saveTwitchAuthData(datefake.userData);
+
+
     // Use authResult.accessToken to make API requests
   } catch (error) {
     console.error('Authorization error:', error);
   }
 }
-
-
-
-
 
 
   const run = `
@@ -256,11 +267,11 @@ const getCleverUrl = () => {
 // }
 
 
-const onCleverLoginPress = () => {
-  return (
-    <WebView source={{ uri: 'https://end-point-small.vercel.app/auth/twitch/callback' }} />
-  );
-}
+// const onCleverLoginPress = () => {
+//   return (
+//     <WebView source={{ uri: 'https://end-point-small.vercel.app/auth/twitch/callback' }} />
+//   );
+// }
 
 
 
