@@ -3,19 +3,12 @@ import {View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Text
 import {WebView} from 'react-native-webview';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ButoaddLogin from './ButoaddLogin';
+// import ButoaddLogin from './ButoaddLogin';
 import {UserData, useUserData} from './UserDataContext';
-
 import * as Linking from 'expo-linking';
-
 import { authorize } from 'react-native-app-auth';
-
-
-import { authentication } from "./config/firebase";
-import { 
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
+import { auth } from "./config/firebase";
+import { signInWithCustomToken, signOut } from "firebase/auth";
 
 
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
@@ -31,18 +24,11 @@ interface Props {
 
 const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
   const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
-  const [webViewURL, setWebViewURL] = useState(initialURL);
   const {userData, setUserData} = useUserData();
-  const [htmlContent, setHtmlContent] = useState('');
   const [isTwitchClicked, setIsTwitchClicked] = useState(false);
-  
+  const [tokenDetails, setTokenDetails] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // const [email, setEmail] = React.useState("");
-  // const [password, setPassword] = React.useState("");
-  // const [error, setError] = React.useState(null);
-  // const inputRef = React.useRef();
-  // const passwordRef = React.useRef();
-  // const [isLoading, setIsLoading] = useState(false);
 
   const Tab = createBottomTabNavigator();
   const Stack = createNativeStackNavigator(); 
@@ -63,7 +49,7 @@ const config = {
 async function authorizeWithTwitch() {
   try {
     const authResult = await authorize(config);
-    console.log('Authorization successful:', authResult);
+    // console.log('Authorization successful:', authResult);
     
     const codeResponse = await fetch(
       `https://end-point-small.vercel.app/code?authorizationCode=${authResult.authorizationCode}`,
@@ -73,35 +59,37 @@ async function authorizeWithTwitch() {
     );
 
     const tokenDetails = await codeResponse.json();
-    console.log(tokenDetails);
 
 
-  const datefake = {
+  const dateRel = {
     userData: {
-        userId: tokenDetails.id,
-        displayName: tokenDetails.display_name,
+        userId: tokenDetails.newUser.uid,
+        displayName: tokenDetails.newUser.name,
         bio: "",
-        broadcaster_type: tokenDetails.broadcaster_type,
-        created_at: tokenDetails.created_at,
-        image: tokenDetails.profile_image_url
+        broadcaster_type: tokenDetails.newUser.broadcaster_type,
+        created_at: tokenDetails.newUser.created_at,
+        image: tokenDetails.newUser.avatar  ?? "https://static-cdn.jtvnw.net/jtv_user_pictures/bf561d2d-8287-4b10-8a60-45f8770317b2-profile_image-70x70.png",
+        tokenDetailsAuth: tokenDetails.customToken,
     }
 };
 
-    saveTwitchAuthData(datefake.userData);
-    setUserData(datefake.userData);
-    
+    saveTwitchAuthData(dateRel.userData);
+    setUserData(dateRel.userData);
+    setTokenDetails(tokenDetails.customToken);
 
-    // Use authResult.accessToken to make API requests
+    if (tokenDetails) {
+    const userCredential = await signInWithCustomToken(auth, tokenDetails.customToken);
+    const user = userCredential.user;
+    // console.log('User signed in: ', user);
+    console.log('User signed in');
+
+    }
+
   } catch (error) {
     console.error('Authorization error:', error);
   }
 }
 
-
-  const run = `
-    window.ReactNativeWebView.postMessage(document.documentElement.outerHTML);
-    true; 
-  `;
 
   const saveTwitchAuthData = async (date: Record<string, any>) => {
     try {
@@ -119,10 +107,14 @@ async function authorizeWithTwitch() {
     try {
       const value = await AsyncStorage.getItem('@TwitchAuthLoginSave');
       if (value !== null) {
-        console.log('Twitch authorization data read:', value);
         const userDataObject = JSON.parse(value);
         setUserData(userDataObject);
+        if (userDataObject) {
+          const userCredential = await signInWithCustomToken(auth, userDataObject.tokenDetailsAuth);
+          if(!userCredential) await  removeTwitchAuthData();
+        }
         updateUser(userDataObject);
+        
       } else {
         console.log('No Twitch authorization data to read.');
       }
@@ -136,6 +128,8 @@ async function authorizeWithTwitch() {
     try {
       await AsyncStorage.removeItem('@TwitchAuthLoginSave');
       setUserData(null);
+      await signOut(auth);
+
       console.log('Twitch authorization data removed successfully.');
     } catch (error) {
       console.log('An error occurred while removing Twitch authorization data:', error);
@@ -179,10 +173,6 @@ async function authorizeWithTwitch() {
 
 
 
-
-
-
-
 const handleDeepLink = (event:any) => {
   const { url } = event;
   if (url) {
@@ -194,13 +184,23 @@ useEffect(() => {
 Linking.addEventListener('url', handleDeepLink);
 });
 
-
+// useEffect(() => {
+//   const unsubscribe = onAuthStateChanged(auth, (user) => {
+//     if (user) {
+//       setIsLoggedIn(true);
+//       console.log("Hura User is logged in");
+//     } else {
+//       setIsLoggedIn(false);
+//       console.log("nie Hura User is false");
+//     }
+//   });
+//   return () => unsubscribe();
+// }, []);
 
 
   return userData ? (
     
     <View>
-      <ButoaddLogin user={userData} />
       <View
         style={{
           flexDirection: 'row',
@@ -370,4 +370,8 @@ const styles = StyleSheet.create({
 });
 
 export default TwitchAuthLogin;
+
+function async(customToken: any) {
+  throw new Error('Function not implemented.');
+}
 

@@ -1,6 +1,7 @@
-import {doc, onSnapshot} from 'firebase/firestore';
 import React, {useEffect, useState} from 'react';
-import {db} from './config/firebase';
+import {doc, onSnapshot, getFirestore } from 'firebase/firestore';
+import {db, app } from './config/firebase';
+import { getAuth } from 'firebase/auth';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -29,11 +30,17 @@ interface Props {
   onPress: () => void;
 }
 
+// const db = getFirestore();
+
+
 const MessageScreen: React.FC<Props> = ({navigation, route}) => {
-  const dimensions = Dimensions.get('window');
+  // const dimensions = Dimensions.get('window');
 
   const [notiUsers, setNotiUsers] = useState<User[]>([]);
   const [routeState, setRouteState] = useState<any>(route);
+
+
+
 
   useEffect(() => {
     const getUserContacts = () => {

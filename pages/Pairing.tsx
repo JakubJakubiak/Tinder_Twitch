@@ -29,8 +29,8 @@ import {
 import Entypo from 'react-native-vector-icons/Entypo';
 import {UserData} from './UserDataContext';
 
-const SCREEN_HEIGHT: number = Dimensions.get('window').height;
-const SCREEN_WIDTH: number = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 interface State {
   currentIndex: number;
@@ -95,7 +95,7 @@ export default class Pairing extends Component<UserData, State> {
     });
 
     this.PanResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
         this.position.setValue({x: gestureState.dx, y: gestureState.dy});
       },
@@ -108,13 +108,13 @@ export default class Pairing extends Component<UserData, State> {
             this.like();
             this.nextImage();
           });
-        } else if (gestureState.dx < -120) {
+        } else if (gestureState.dx < -50) {  // Changed threshold to -50 for better response
           Animated.spring(this.position, {
             toValue: {x: -SCREEN_WIDTH - 100, y: gestureState.dy},
             useNativeDriver: false,
           }).start(() => {
-            this.nextImage();
             this.dislike();
+            this.nextImage();
           });
         } else {
           Animated.spring(this.position, {
@@ -164,7 +164,8 @@ export default class Pairing extends Component<UserData, State> {
     this.setState(
       prevState => ({currentIndex: prevState.currentIndex + 1}),
       () => {
-        if (this.state.currentIndex >= this.state.images.length - 1) {
+        console.log('Current Index:', this.state.currentIndex);
+        if (this.state.currentIndex >= this.state.images.length) {
           this.fetchImages();
         }
         this.position.setValue({x: 0, y: 0});
@@ -203,12 +204,12 @@ export default class Pairing extends Component<UserData, State> {
   };
 
   dislike = () => {
-    console.log('Nolike');
+    console.log('Disliked:', this.state.images[this.state.currentIndex]);
   };
 
   renderUsers = () => {
     return this.state.images
-      .map((user: UserData, index: number) => {
+      .map((user, index) => {
         if (index < this.state.currentIndex) {
           return null;
         } else if (index === this.state.currentIndex) {
@@ -306,15 +307,14 @@ export default class Pairing extends Component<UserData, State> {
       .reverse();
   };
 
-
   render() {
     return this.state.images.length === 0 ? (
-      (this.fetchImages(),
+      this.fetchImages(),
       (
         <View style={styles.loading}>
           <ActivityIndicator size="large" color="#841584" />
         </View>
-      ))
+      )
     ) : (
       <View style={styles.container}>
         <View style={{height: 60}}></View>
@@ -338,22 +338,21 @@ const styles = StyleSheet.create({
     // backgroundColor: '#f40f0f0',
   },
 
-  containerback:{
+  containerback: {
     flex: 1,
-    width:1000,
-    height:1000,
+    width: 1000,
+    height: 1000,
     top: -(930 / 2),
-    position:'absolute',
+    position: 'absolute',
     backgroundColor: '#6441a555',
     alignItems: 'center',
     justifyContent: 'center',
-    borderBottomLeftRadius:500,
-    borderBottomRightRadius:500
+    borderBottomLeftRadius: 500,
+    borderBottomRightRadius: 500,
   },
 
-
   img: {
-    width: "auto",
+    width: 'auto',
     height: 400,
     padding: 10,
     resizeMode: 'cover',
@@ -366,24 +365,22 @@ const styles = StyleSheet.create({
     top: '48%',
     borderRadius: 20,
     width: 300,
-  
   },
   loading: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
+
   tex: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderBottomLeftRadius: 20,
     color: '#fff',
     fontSize: 37,
-    width: "auto", 
+    width: 'auto',
     padding: 10,
-    textAlign: 'center', 
-    // marginLeft: 'auto', 
-    marginRight: 'auto', 
+    textAlign: 'center',
+    marginRight: 'auto',
   },
 });
