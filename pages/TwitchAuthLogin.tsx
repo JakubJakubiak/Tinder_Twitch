@@ -23,7 +23,6 @@ interface Props {
 
 
 const TwitchAuthLogin: React.FC<Props> = ({updateUser}) => {
-  const initialURL = 'https://end-point-small.vercel.app/auth/twitch';
   const {userData, setUserData} = useUserData();
   const [isTwitchClicked, setIsTwitchClicked] = useState(false);
   const [tokenDetails, setTokenDetails] = useState(null);
@@ -82,6 +81,7 @@ async function authorizeWithTwitch() {
     const user = userCredential.user;
     // console.log('User signed in: ', user);
     console.log('User signed in');
+    // updateUser();
 
     }
 
@@ -108,10 +108,10 @@ async function authorizeWithTwitch() {
       const value = await AsyncStorage.getItem('@TwitchAuthLoginSave');
       if (value !== null) {
         const userDataObject = JSON.parse(value);
-        setUserData(userDataObject);
+        setUserData(userDataObject); 
         if (userDataObject) {
           const userCredential = await signInWithCustomToken(auth, userDataObject.tokenDetailsAuth);
-          if(!userCredential) await  removeTwitchAuthData();
+          if(!userCredential) await removeTwitchAuthData();
         }
         updateUser(userDataObject);
         
@@ -119,16 +119,16 @@ async function authorizeWithTwitch() {
         console.log('No Twitch authorization data to read.');
       }
     } catch (error) {
+      await removeTwitchAuthData()
       console.log(error);
     }
   };
 
-
   const removeTwitchAuthData = async () => {
     try {
       await AsyncStorage.removeItem('@TwitchAuthLoginSave');
-      setUserData(null);
       await signOut(auth);
+      setUserData(null);
 
       console.log('Twitch authorization data removed successfully.');
     } catch (error) {
@@ -137,39 +137,10 @@ async function authorizeWithTwitch() {
   };
   
 
-  const isJSON = (str: string) => {
-    try {
-      JSON.parse(str);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
 
   useEffect(() => {
     retrieveTwitchAuthData();
   }, []);
-
-
-
-
-
-  
-  const LoginGoust = () => {
-    const datefake = {
-      userData: {
-          userId: "69",
-          displayName: "Goust",
-          bio: "",
-          image: "https://static-cdn.jtvnw.net/jtv_user_pictures/2a9fd65f-4ec6-409a-af68-9867746cb77a-profile_image-300x300.png"
-      }
-  };
-    console.log('LoginGoust');
-    saveTwitchAuthData(datefake.userData);
-    setUserData(datefake.userData);
-};
-
 
 
 
@@ -183,19 +154,6 @@ const handleDeepLink = (event:any) => {
 useEffect(() => {
 Linking.addEventListener('url', handleDeepLink);
 });
-
-// useEffect(() => {
-//   const unsubscribe = onAuthStateChanged(auth, (user) => {
-//     if (user) {
-//       setIsLoggedIn(true);
-//       console.log("Hura User is logged in");
-//     } else {
-//       setIsLoggedIn(false);
-//       console.log("nie Hura User is false");
-//     }
-//   });
-//   return () => unsubscribe();
-// }, []);
 
 
   return userData ? (
@@ -267,25 +225,6 @@ Linking.addEventListener('url', handleDeepLink);
                 textTransform: 'uppercase',
               }}>
               Twitch
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{
-              backgroundColor: '#fff',
-              padding: 10,
-              borderRadius: 5,
-              margin: 10,
-            }}
-            onPress={LoginGoust}>
-            <Text
-              style={{
-                color: '#000',
-                fontSize: 16,
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-              }}>
-              Goust
             </Text>
           </TouchableOpacity>
 

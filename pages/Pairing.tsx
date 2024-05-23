@@ -164,7 +164,6 @@ export default class Pairing extends Component<UserData, State> {
     this.setState(
       prevState => ({currentIndex: prevState.currentIndex + 1}),
       () => {
-        console.log('Current Index:', this.state.currentIndex);
         if (this.state.currentIndex >= this.state.images.length) {
           this.fetchImages();
         }
