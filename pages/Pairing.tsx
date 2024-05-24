@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
 
   img: {
     width: 'auto',
-    height: 400,
+    height: "80%",
     padding: 10,
     resizeMode: 'cover',
     borderRadius: 20,
@@ -361,7 +361,8 @@ const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
-    top: '48%',
+    // top: '48%',
+    top: '65%',
     borderRadius: 20,
     width: 300,
   },

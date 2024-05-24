@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {TouchableOpacity, Text, View} from 'react-native';
+import {TouchableOpacity, Text, View, Image, Animated} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -26,13 +26,13 @@ interface MainContainerProps {}
 function MainContainer(props: MainContainerProps) {
   const {userData, setUserData} = useUserData();
 
+
   const retrieveTwitchAuthData = async () => {
     try {
       const value = await AsyncStorage.getItem('@TwitchAuthLoginSave');
       if (value !== null) {
         const userDataObject = JSON.parse(value);
-        console.log(userDataObject);
-        // setUserData(userDataObject);
+        setUserData(userDataObject);
       }
     } catch (error) {
       console.error('Authorization error:', error);
@@ -44,7 +44,6 @@ function MainContainer(props: MainContainerProps) {
       await signOut(auth);
       await AsyncStorage.removeItem('@TwitchAuthLoginSave');
       setUserData(null);
-
       console.log('Twitch authorization data removed successfully.');
     } catch (error) {
       console.log(
@@ -54,12 +53,34 @@ function MainContainer(props: MainContainerProps) {
     }
   };
 
+  useEffect(() => {
+    retrieveTwitchAuthData();
+  }, []);
+
+
+  const [showDetails, setShowDetails] = useState(false);
+  const [animatedValue] = useState(new Animated.Value(0));
+
+  const handleImagePress = () => {
+    setShowDetails(!showDetails);
+    Animated.timing(animatedValue, {
+      toValue: showDetails ? 0 : 1,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const animatedStyle = {
+    opacity: animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+    }),
+  };
   return (
     <NavigationContainer>
       {!userData ? (
         <Stack.Navigator>
           <Stack.Screen name="TwitchAuthLogin" component={TwitchAuthLogin}/>
-          
         </Stack.Navigator>
       ) : (
         <Tab.Navigator
@@ -86,6 +107,55 @@ function MainContainer(props: MainContainerProps) {
                 backgroundColor: '#6441a5',
               },
               headerTintColor: '#fff',
+              headerRight: () => (
+                <>
+        <View>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+        }}
+      >
+        <TouchableOpacity onPress={handleImagePress}>
+          <Image
+            source={{ uri: userData.image }}
+            style={{ width: 40, height: 40, borderRadius: 25 }}
+          />
+        </TouchableOpacity>
+      </View>
+      <Animated.View style={[animatedStyle, { position: 'absolute', top: 50, right:2}]}>
+        {showDetails && (
+          <View style={{ backgroundColor: 'white', padding: 10, borderRadius:5 }}>
+            <Text style={{
+                  color: '#000',
+                  padding: 4,
+            }}>{userData.displayName}</Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#6441A4',
+                borderRadius: 5,
+                padding:5,
+              }}
+              onPress={removeTwitchAuthData}
+            >
+              <Text
+                style={{
+                  color: '#FFFFFF',
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Logout
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </Animated.View>
+    </View>
+                </>
+              ),
             }}>
             {props =>
               userData ? <Pairing {...props} {...userData} /> : <View />
@@ -99,6 +169,9 @@ function MainContainer(props: MainContainerProps) {
                   {...props}
                   userData={userData}
                   removeTwitchAuthData={removeTwitchAuthData}
+                  handleImagePress={handleImagePress}
+                  animatedValue={animatedValue}
+                  showDetails={showDetails}
                 />
               ) : (
                 <View />
@@ -121,6 +194,7 @@ function ChatStackScreen({
   userData,
   removeTwitchAuthData,
 }: ChatStackScreenProps) {
+  
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -131,25 +205,8 @@ function ChatStackScreen({
           },
           headerTintColor: '#fff',
           headerRight: () => (
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#6441A4',
-                padding: 10,
-                borderRadius: 5,
-                marginRight: 10,
-              }}
-              onPress={removeTwitchAuthData} // Pass the function reference here
-            >
-              <Text
-                style={{
-                  color: '#FFFFFF',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                }}>
-                Logout
-              </Text>
-            </TouchableOpacity>
+        <>
+                </>
           ),
         }}>
         {props => <HomeNoScreen {...props} userData={userData} />}
