@@ -156,82 +156,38 @@ const TwitchAuthLogin = () => {
     Linking.addEventListener('url', handleDeepLink);
   });
 
-  // <View>
-  //   <View
-  //     style={{
-  //       flexDirection: 'row',
-  //       alignItems: 'center',
-  //       justifyContent: 'flex-end',
-  //       backgroundColor: '#000',
-  //       paddingHorizontal: 10,
-  //       paddingVertical: 5,
-  //     }}>
-  //         <TouchableOpacity
-  //         style={{
-  //           backgroundColor: '#6441A4',
-  //           padding: 10,
-  //           borderRadius: 5,
-  //           margin: 10,
-  //         }}
-  //         onPress={removeTwitchAuthData}>
-  //         <Text
-  //           style={{
-  //             color: '#FFFFFF',
-  //             fontSize: 16,
-  //             fontWeight: 'bold',
-  //             textTransform: 'uppercase',
-  //           }}>
-  //             Logout
-  //         </Text>
-  //       </TouchableOpacity>
-  //     <View>
-  //       <Text>{userData.displayName}</Text>
-  //       <Text>{userData.bio}</Text>
-  //     </View>
 
-  //     <Image
-  //       source={{uri: userData.image}}
-  //       style={{width: 50, height: 50, borderRadius: 25, marginLeft: 10}}
-  //     />
-  //   </View>
-  // </View>
 
   return (
     <>
-      <View style={{width: '100%', height: '100%'}}>
-        {!isTwitchClicked ? (
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 10,
-            }}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#6441A4',
-                padding: 10,
-                borderRadius: 5,
-                margin: 10,
-              }}
-              onPress={authorizeWithTwitch}>
-              <Text
-                style={{
-                  color: '#444',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                }}>
-                Twitch
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View>
-            <ActivityIndicator size="large" color="#841584" />
-          </View>
-        )}
+      <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image
+          source={{
+            uri: 'https://pngimg.com/uploads/twitch/twitch_PNG46.png',
+          }}
+          style={styles.logo}
+        />
       </View>
+
+      {/* <Text style={styles.welcomeText}>Log in with Twitch</Text> */}
+
+      {/* Button or Loading */}
+      {!isTwitchClicked ? (
+        <TouchableOpacity
+          style={styles.twitchButton}
+          onPress={authorizeWithTwitch}>
+          <View style={styles.buttonContent}>
+            <Text style={styles.buttonText}>Log in with Twitch</Text>
+          </View>
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#6441A4" />
+          <Text style={styles.loadingText}>Connecting to Twitch...</Text>
+        </View>
+      )}
+    </View>
     </>
   );
 };
@@ -239,68 +195,61 @@ const TwitchAuthLogin = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#0E0E10', // Twitch dark background
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 16,
-    paddingLeft: 8,
-    paddingRight: 8,
-  },
-  button: {
-    backgroundColor: '#302298',
-    borderRadius: 20,
-    padding: 10,
-    margin: 14,
-    width: '78%',
-    height: 50,
+  logoContainer: {
+    marginBottom: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row',
   },
-  loginText: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 16,
-    alignSelf: 'center',
+  logo: {
+    width: 120,
+    height: 120,
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    color: '#FFFFFF',
+    marginBottom: 20,
     textAlign: 'center',
   },
-  logo: {
-    width: 150,
-    height: 150,
-    marginBottom: 20,
+  twitchButton: {
+    backgroundColor: '#6441A4',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
-  downText: {
-    color: '#331ece',
-    fontSize: 16,
-    fontWeight: '400',
-    marginTop: 10,
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  signup: {
-    alignSelf: 'flex-start',
-    textDecorationLine: 'underline',
-    color: '#331ece',
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 5,
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    color: '#6441A4',
     marginTop: 10,
+    fontSize: 16,
   },
 });
+
 
 export default TwitchAuthLogin;
 

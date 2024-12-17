@@ -56,6 +56,7 @@ function MainContainer(props: MainContainerProps) {
     retrieveTwitchAuthData();
   }, []);
 
+
   const [showDetails, setShowDetails] = useState(false);
   const [animatedValue] = useState(new Animated.Value(0));
 
@@ -74,91 +75,131 @@ function MainContainer(props: MainContainerProps) {
       outputRange: [0, 1],
     }),
   };
+
+
+
+  // if (!userData) {
+  //   // Show Twitch login screen if no user data
+  //   return (
+  //     <NavigationContainer>
+  //       <Stack.Navigator>
+  //         <Stack.Screen name="TwitchAuthLogin" component={TwitchAuthLogin} />
+  //       </Stack.Navigator>
+  //     </NavigationContainer>
+  //   );
+  // }
+
+
+
+
+
+
   return (
     <NavigationContainer>
-      {!userData ? (
-        <Stack.Navigator>
-          <Stack.Screen name="TwitchAuthLogin" component={TwitchAuthLogin} />
-        </Stack.Navigator>
-      ) : (
-        <Tab.Navigator
-          initialRouteName={home}
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName: string = '';
-              if (route.name === home) {
-                iconName = 'heart';
-              } else if (route.name === 'chat') {
-                iconName = 'message';
-              }
-              return <Entypo name={iconName} size={size} color={color} />;
-            },
-            tabBarActiveTintColor: 'tomato',
-            tabBarInactiveTintColor: 'white',
-            tabBarLabelStyle: { paddingBottom: 10, fontSize: 10, color: 'white' },
-            tabBarStyle: { backgroundColor: '#6441a5', padding: 10, height: 70 },
-          })}>
-          <Tab.Screen
-            name={home}
-            options={{
-              headerStyle: { backgroundColor: '#6441a5' },
-              headerTintColor: '#fff',
-              headerRight: () => (
-                <View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'flex-end',
-                    }}
-                  >
-                    <TouchableOpacity onPress={handleImagePress}>
-                      <Image
-                        source={{ uri: userData.image }}
-                        style={{ width: 40, height: 40, borderRadius: 25 }}
-                      />
+    {!userData ? (
+      <Stack.Navigator>
+        <Stack.Screen name="TwitchAuthLogin" component={TwitchAuthLogin} />
+      </Stack.Navigator>
+    ) : (
+      <Tab.Navigator
+        initialRouteName={home}
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName: string = '';
+            if (route.name === home) {
+              iconName = 'heart';
+            } else if (route.name === 'Chat') {
+              iconName = 'message';
+            }
+            return <Entypo name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: 'tomato',
+          tabBarInactiveTintColor: 'white',
+          tabBarLabelStyle: { paddingBottom: 10, fontSize: 10, color: 'white' },
+          tabBarStyle: { backgroundColor: '#6441a5', padding: 10, height: 70 },
+        })}>
+           {/* ikonka paring  */}
+        <Tab.Screen
+          name={home}
+          options={{
+            headerStyle: { backgroundColor: '#6441a5' },
+            headerTintColor: '#fff',
+            headerRight: () => (
+              <View>
+                <TouchableOpacity 
+                  onPress={handleImagePress}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  {/* ikonka paring  */}
+                  <Image
+                    source={{ uri: userData.image }}
+                    style={{ width: 40, height: 40,  right: 20, borderRadius: 25 }}
+                  />
+                </TouchableOpacity>
+                
+                <Animated.View 
+                  style={[
+                    animatedStyle, 
+                    { 
+                      position: 'absolute', 
+                      top: 50, 
+                      right: 2,
+                      display: showDetails ? 'flex' : 'none'
+                    }
+                  ]}
+                >
+                  <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 5 }}>
+                    <Text style={{ color: '#000', padding: 4 }}>{userData.displayName}</Text>
+                    <TouchableOpacity
+                      style={{ 
+                        backgroundColor: '#6441A4', 
+                        borderRadius: 5, 
+                        padding: 5,
+                        marginTop: 5
+                      }}
+                      onPress={removeTwitchAuthData}
+                    >
+                      <Text style={{ 
+                        color: '#FFFFFF', 
+                        fontSize: 16, 
+                        fontWeight: 'bold', 
+                        textTransform: 'uppercase',
+                        textAlign: 'center'
+                      }}>
+                        Logout
+                      </Text>
                     </TouchableOpacity>
                   </View>
-                  <Animated.View style={[animatedStyle, { position: 'absolute', top: 50, right: 2 }]}>
-                    {showDetails && (
-                      <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 5 }}>
-                        <Text style={{ color: '#000', padding: 4 }}>{userData.displayName}</Text>
-                        <TouchableOpacity
-                          style={{ backgroundColor: '#6441A4', borderRadius: 5, padding: 5 }}
-                          onPress={removeTwitchAuthData}
-                        >
-                          <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', textTransform: 'uppercase' }}>
-                            Logout
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                  </Animated.View>
-                </View>
-              ),
-            }}>
-            {props =>
-              userData ? <Pairing {...props} {...userData} /> : <View />
-            }
-          </Tab.Screen>
+                </Animated.View>
+              </View>
+            ),
+          }}>
+          {props =>
+            userData ? <Pairing {...props} {...userData} /> : <View />
+          }
+        </Tab.Screen>
 
-          <Tab.Screen name="chat" options={{ headerShown: false }}>
-            {props =>
-              userData ? (
-                <ChatStackScreen
-                  {...props}
-                  userData={userData}
-                  removeTwitchAuthData={removeTwitchAuthData}
-                />
-              ) : (
-                <View />
-              )
-            }
-          </Tab.Screen>
-        </Tab.Navigator>
-      )}
-    </NavigationContainer>
-  );
+        <Tab.Screen name="Chat" options={{ headerShown: false }}>
+          {props =>
+            userData ? (
+              <ChatStackScreen
+                {...props}
+                userData={userData}
+                removeTwitchAuthData={removeTwitchAuthData}
+              />
+            ) : (
+              <View />
+            )
+          }
+        </Tab.Screen>
+      </Tab.Navigator>
+    )}
+  </NavigationContainer>
+);
 }
 
 interface ChatStackScreenProps {
@@ -194,45 +235,67 @@ function ChatStackScreen({
 
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
+      <Tab.Screen
+        name={home}
         options={{
           headerStyle: { backgroundColor: '#6441a5' },
           headerTintColor: '#fff',
-          headerRight: () => <View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <TouchableOpacity onPress={handleImagePress}>
+          headerRight: () => (
+            <View>
+              <TouchableOpacity 
+                onPress={handleImagePress}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                }}
+              >
               <Image
-                source={{ uri: userData.image }}
-                style={{ width: 40, height: 40, borderRadius: 25 }}
-              />
-            </TouchableOpacity>
-          </View>
-          <Animated.View style={[animatedStyle, { position: 'absolute', top: 50, right: 2 }]}>
-            {showDetails && (
-              <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 5 }}>
-                <Text style={{ color: '#000', padding: 4 }}>{userData.displayName}</Text>
-                <TouchableOpacity
-                  style={{ backgroundColor: '#6441A4', borderRadius: 5, padding: 5 }}
-                  onPress={removeTwitchAuthData}
-                >
-                  <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', textTransform: 'uppercase' }}>
-                    Logout
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </Animated.View>
-        </View>
+                  source={{ uri: userData.image }}
+                  style={{ width: 40, height: 40, borderRadius: 25   }}
+                />
+              </TouchableOpacity>
+              
+              <Animated.View 
+                style={[
+                  animatedStyle, 
+                  showDetails ? null:
+                  { 
+                    position: 'absolute', 
+                    top: 50, 
+                    right: 2,
+                    display: 'flex' 
+                  }
+                ]}
+              >
+                <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 5 }}>
+                  <Text style={{ color: '#000', padding: 4 }}>{userData.displayName}</Text>
+                  <TouchableOpacity
+                    style={{ 
+                      backgroundColor: '#6441A4', 
+                      borderRadius: 5, 
+                      padding: 5,
+                      marginTop: 5
+                    }}
+                    onPress={removeTwitchAuthData}
+                  >
+                    <Text style={{ 
+                      color: '#FFFFFF', 
+                      fontSize: 16, 
+                      fontWeight: 'bold', 
+                      textTransform: 'uppercase',
+                      textAlign: 'center'
+                    }}>
+                      Logout
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </Animated.View>
+            </View>
+          ),
         }}>
         {props => <HomeNoScreen {...props} userData={userData} />}
-      </Stack.Screen>
+      </Tab.Screen>
       <Stack.Screen
         name="Chat"
         component={Chat}
