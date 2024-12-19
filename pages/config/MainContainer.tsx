@@ -91,19 +91,26 @@ function MainContainer(props: MainContainerProps) {
 
 
 
-
-
-
   return (
     <NavigationContainer>
     {!userData ? (
-      <Stack.Navigator>
+      <Stack.Navigator        screenOptions={{
+        headerStyle: { backgroundColor: '#000'},
+        headerTitleStyle: { 
+          color: '#000',
+          fontSize: 20,
+          fontWeight: 'bold',
+        }, 
+        headerTintColor: '#000', 
+        contentStyle: { backgroundColor: '#fff' },
+      }}>
         <Stack.Screen name="TwitchAuthLogin" component={TwitchAuthLogin} />
       </Stack.Navigator>
     ) : (
       <Tab.Navigator
         initialRouteName={home}
         screenOptions={({ route }) => ({
+          
           tabBarIcon: ({ focused, color, size }) => {
             let iconName: string = '';
             if (route.name === home) {
@@ -115,8 +122,9 @@ function MainContainer(props: MainContainerProps) {
           },
           tabBarActiveTintColor: 'tomato',
           tabBarInactiveTintColor: 'white',
-          tabBarLabelStyle: { paddingBottom: 10, fontSize: 10, color: 'white' },
-          tabBarStyle: { backgroundColor: '#6441a5', padding: 10, height: 70 },
+          tabBarShowLabel: false,
+          tabBarLabelStyle: { paddingBottom: 0, fontSize: 10, color: 'white' },
+          tabBarStyle: { backgroundColor: '#6441a5', padding: 0, height: 50 },
         })}>
            {/* ikonka paring  */}
         <Tab.Screen

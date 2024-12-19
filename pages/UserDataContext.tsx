@@ -3,12 +3,13 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 export interface UserData {
   userId: string;
   image: string | undefined;
-  bio: ReactNode;
+  bio: string | undefined;
   displayName: ReactNode;
 }
 
 interface ContextType {
   userData: UserData | null;
+  
   setUserData: React.Dispatch<React.SetStateAction<UserData | null>>;
 }
 

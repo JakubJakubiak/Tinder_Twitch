@@ -54,19 +54,24 @@ const TwitchAuthLogin = () => {
 
       const tokenDetails = await codeResponse.json();
 
+
+  
       const dateRel = {
         userData: {
           userId: tokenDetails.newUser.uid,
           displayName: tokenDetails.newUser.name,
-          bio: '',
-          broadcaster_type: tokenDetails.newUser.broadcaster_type,
-          created_at: tokenDetails.newUser.created_at,
+          bio: tokenDetails.newUser.bio ?? "",
+          broadcasterType: tokenDetails.newUser.broadcaster_type,
+          createdAt: tokenDetails.newUser.created_at,
           image:
             tokenDetails.newUser.avatar ??
-            'https://static-cdn.jtvnw.net/jtv_user_pictures/bf561d2d-8287-4b10-8a60-45f8770317b2-profile_image-70x70.png',
+            'https://static-cdn.jtvnw.net/jtv_user_pictures/8db977af-eb77-445b-a494-ab385a03655f-profile_image-70x70.png',
           tokenDetailsAuth: tokenDetails.customToken,
         },
       };
+
+      // console.log(`////////sss/////////${JSON.stringify(tokenDetails)}`);
+
 
       saveTwitchAuthData(dateRel.userData);
       setUserData(dateRel.userData);
@@ -195,7 +200,7 @@ const TwitchAuthLogin = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0E0E10', // Twitch dark background
+    backgroundColor: '#0E0E10', 
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,

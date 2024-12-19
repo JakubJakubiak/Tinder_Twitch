@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     marginHorizontal: 4,
     flexDirection: 'row',
-    borderBottomColor: "#000",
+    borderBottomColor: "#d9d0d0",
     paddingBottom: 2,
     borderBottomWidth: 1,
   },

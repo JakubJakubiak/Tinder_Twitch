@@ -108,7 +108,7 @@ export default class Pairing extends Component<UserData, State> {
             this.like();
             this.nextImage();
           });
-        } else if (gestureState.dx < -50) {  // Changed threshold to -50 for better response
+        } else if (gestureState.dx < -50) {  
           Animated.spring(this.position, {
             toValue: {x: -SCREEN_WIDTH - 100, y: gestureState.dy},
             useNativeDriver: false,
@@ -147,10 +147,13 @@ export default class Pairing extends Component<UserData, State> {
             image: image,
             userId: doc.id,
             displayName: data.name,
-            bio: undefined,
+            bio: data.bio,
           });
+
+          // console.log(`////////userData/////////${JSON.stringify(userId)}`);
         }
       });
+
 
       this.setState(prevState => ({
         images: [...prevState.images, ...images],
@@ -172,38 +175,66 @@ export default class Pairing extends Component<UserData, State> {
     );
   };
 
+  
+
+ 
   like = async () => {
     const current = this.state.images[this.state.currentIndex];
     this.setState({likedImage: current});
-
+  
     const userId = this.props.userId;
     const usersCollection = collection(db, 'Users');
     const userDocRef = doc(usersCollection, userId);
-
+  
     try {
+   
       const userDocSnapshot = await getDoc(userDocRef);
       const userData = userDocSnapshot.data();
       const realFriendArray = userData?.realFriend || [];
+  
+      const likedUserDocRef = doc(usersCollection, current.userId);
+      const likedUserDocSnapshot = await getDoc(likedUserDocRef);
+      const likedUserData = likedUserDocSnapshot.data();
+  
+     
+      const likedUserRealFriendArray = likedUserData?.realFriend || [];
+      const isAlreadyLiked = likedUserRealFriendArray.some(
+        (friend: { userId: string; }) => friend.userId === userId
+      );
+  
+     
+      const iLikeYouToo = isAlreadyLiked ?? true;
+  
+     
       const updatedRealFriendArray = [
-        ...realFriendArray,
+        ...realFriendArray.filter((friend: { userId: string; }) => 
+          friend.userId !== current.userId 
+        ),
         {
           image: current.image,
           userId: current.userId,
           displayName: current.displayName,
-        },
+          iLikeYouToo: iLikeYouToo, 
+        }
       ];
+  
+ 
       await setDoc(
         userDocRef,
-        {realFriend: updatedRealFriendArray},
+        {
+          realFriend: updatedRealFriendArray,
+          iLikeYouToo: iLikeYouToo
+        },
         {merge: true},
       );
+  
     } catch (error) {
       console.error('Error updating document:', error);
     }
   };
 
   dislike = () => {
-    console.log('Disliked:', this.state.images[this.state.currentIndex]);
+    console.log('Disliked:', this.state.images[this.state.currentIndex], 'You Id', this.props.userId);
   };
 
   renderUsers = () => {
@@ -272,6 +303,7 @@ export default class Pairing extends Component<UserData, State> {
                 <View style={styles.overlay}>
                   <ScrollView>
                     <Text style={styles.tex}>{user.displayName}</Text>
+                    <Text style={styles.bio}>{user.bio}</Text>
                   </ScrollView>
                 </View>
               </View>
@@ -375,11 +407,26 @@ const styles = StyleSheet.create({
   tex: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    borderBottomLeftRadius: 20,
+    // borderBottomLeftRadius: 20,
+    borderRadius: 10,
     color: '#fff',
-    fontSize: 37,
+    fontSize: 27,
     width: 'auto',
     padding: 10,
+    textAlign: 'center',
+    marginRight: 'auto',
+  },
+
+  bio: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderBottomLeftRadius: 2,
+    color: '#fff',
+    left: 10,
+    top:2,
+    fontSize: 10,
+    width: 'auto',
+    padding: 5,
     textAlign: 'center',
     marginRight: 'auto',
   },
